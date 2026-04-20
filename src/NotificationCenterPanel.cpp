@@ -13,6 +13,7 @@
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QImage>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
@@ -22,6 +23,7 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QPen>
+#include <QProcess>
 #include <QProcessEnvironment>
 #include <QPropertyAnimation>
 #include <QPushButton>
@@ -138,6 +140,87 @@ bool parseStyleLength(const QString &value, int *parsed)
     return true;
 }
 
+struct WaybarLayerInfo {
+    int level = -1;
+    int topInset = 0;
+};
+
+WaybarLayerInfo waybarLayerInfoOnScreen(QScreen *screen)
+{
+    WaybarLayerInfo info;
+    if (!screen) {
+        return info;
+    }
+
+    QProcess process;
+    process.start(QStringLiteral("/usr/bin/hyprctl"),
+                  {QStringLiteral("-j"), QStringLiteral("layers")});
+    if (!process.waitForFinished(180)) {
+        process.kill();
+        process.waitForFinished();
+        return info;
+    }
+
+    if (process.exitStatus() != QProcess::NormalExit || process.exitCode() != 0) {
+        return info;
+    }
+
+    QJsonParseError parseError;
+    const QJsonDocument doc = QJsonDocument::fromJson(process.readAllStandardOutput(), &parseError);
+    if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+        return info;
+    }
+
+    const QRect screenGeometry = screen->geometry();
+    const auto collectMonitorWaybarInfo = [&screenGeometry](const QJsonObject &monitorObject) {
+        WaybarLayerInfo monitorInfo;
+        const QJsonObject levels = monitorObject.value(QStringLiteral("levels")).toObject();
+        for (auto it = levels.constBegin(); it != levels.constEnd(); ++it) {
+            bool levelOk = false;
+            const int level = it.key().toInt(&levelOk);
+            if (!levelOk) {
+                continue;
+            }
+
+            const QJsonArray surfaces = it.value().toArray();
+            for (const QJsonValue &surfaceValue : surfaces) {
+                const QJsonObject surface = surfaceValue.toObject();
+                if (surface.value(QStringLiteral("namespace")).toString() != QStringLiteral("waybar")) {
+                    continue;
+                }
+
+                const int x = surface.value(QStringLiteral("x")).toInt();
+                const int y = surface.value(QStringLiteral("y")).toInt();
+                const int w = surface.value(QStringLiteral("w")).toInt();
+                const int h = surface.value(QStringLiteral("h")).toInt();
+                if (w <= 0 || h <= 0) {
+                    continue;
+                }
+
+                const QRect layerRect(x, y, w, h);
+                if (layerRect.intersects(screenGeometry)) {
+                    if (monitorInfo.level < 0 || level < monitorInfo.level) {
+                        monitorInfo.level = level;
+                    }
+                    const int topInset = qMax(0, layerRect.bottom() - screenGeometry.top() + 1);
+                    if (topInset > monitorInfo.topInset) {
+                        monitorInfo.topInset = topInset;
+                    }
+                }
+            }
+        }
+        return monitorInfo;
+    };
+
+    const QJsonObject root = doc.object();
+    const QJsonValue screenValue = root.value(screen->name());
+    if (screenValue.isObject()) {
+        return collectMonitorWaybarInfo(screenValue.toObject());
+    }
+
+    return info;
+}
+
 QColor styleColorValue(const QHash<QString, QString> &styleVariables,
                        const QString &name,
                        const QColor &fallback)
@@ -170,33 +253,6 @@ QIcon dismissGlyphIcon(int buttonSize, const QColor &color)
     painter.drawLine(QPointF(size - inset, inset), QPointF(inset, size - inset));
 
     return QIcon(pixmap);
-}
-
-bool envFlagEnabled(const char *name, bool fallback = false)
-{
-    const QByteArray raw = qgetenv(name);
-    if (raw.isEmpty()) {
-        return fallback;
-    }
-
-    const QString normalized = QString::fromUtf8(raw).trimmed().toLower();
-    if (normalized.isEmpty()) {
-        return true;
-    }
-    if (normalized == QStringLiteral("1") ||
-        normalized == QStringLiteral("true") ||
-        normalized == QStringLiteral("yes") ||
-        normalized == QStringLiteral("on")) {
-        return true;
-    }
-    if (normalized == QStringLiteral("0") ||
-        normalized == QStringLiteral("false") ||
-        normalized == QStringLiteral("no") ||
-        normalized == QStringLiteral("off")) {
-        return false;
-    }
-
-    return fallback;
 }
 
 QPixmap loadPixmapFromImageData(const QVariant &value)
@@ -1521,6 +1577,7 @@ void NotificationCenterPanel::positionSideHandle()
 void NotificationCenterPanel::refreshWindowPlacement(bool animated)
 {
     constexpr int kMonitorBottomInsetPx = 80;
+    constexpr int kCenteredHeightPercent = 86;
 
     QScreen *screen = resolveScreen();
     if (!screen) {
@@ -1529,20 +1586,20 @@ void NotificationCenterPanel::refreshWindowPlacement(bool animated)
 
     const QRect available = screen->availableGeometry();
     const QRect screenGeometry = screen->geometry();
+    const WaybarLayerInfo waybarInfo = waybarLayerInfoOnScreen(screen);
+    const bool waybarActive = anchorAtTop() && waybarInfo.level == 1;
+    const int topInset = waybarActive ? waybarInfo.topInset : 0;
+    const int topBound = screenGeometry.top() + topInset + config_.layout.marginTop;
+    const int bottomBound = screenGeometry.bottom() - kMonitorBottomInsetPx - config_.layout.marginBottom;
+    const int maxHeight = qMax(1, bottomBound - topBound + 1);
+    const int preferredHeight = qMax(config_.layout.minimumHeight,
+                                     (maxHeight * kCenteredHeightPercent) / 100);
     setFixedWidth(qMax(1, config_.layout.width));
-    const int maxHeightByLayout = qMax(1,
-                                       available.height() -
-                                           config_.layout.marginTop -
-                                           config_.layout.marginBottom);
-    const int topY = available.top() + config_.layout.marginTop;
-    const int maxBottomY = screenGeometry.bottom() - kMonitorBottomInsetPx;
-    const int maxHeightByMonitorBottom = qMax(1, maxBottomY - topY + 1);
-    const int maxHeight = qMin(maxHeightByLayout, maxHeightByMonitorBottom);
-    const int panelHeight = qBound(1, qMax(config_.layout.minimumHeight, maxHeight), maxHeight);
+    const int panelHeight = qBound(1, preferredHeight, maxHeight);
     setFixedHeight(panelHeight);
 
     const QRect placementGeometry = usesLayerShellPlacement()
-        ? layerShellPlacementGeometry(screen)
+        ? screenGeometry
         : available;
 
 #if WARDNC_HAS_LAYERSHELLQT
@@ -1556,12 +1613,8 @@ void NotificationCenterPanel::refreshWindowPlacement(bool animated)
         ? openPosition(placementGeometry, panelHeight)
         : closedPosition(placementGeometry, panelHeight);
 
-    if (open_ && usesLayerShellPlacement() && envFlagEnabled("WARDNC_TEST_WAYBAR_POSITION", false)) {
-        const int testX = available.left() + 48;
-        const int testY = qBound(available.top(),
-                                 available.top() + config_.layout.marginTop,
-                                 available.bottom() - panelHeight + 1);
-        target = QPoint(testX, testY);
+    if (anchorAtTop()) {
+        target.setY(topBound + ((maxHeight - panelHeight) / 2));
     }
 
 #if WARDNC_HAS_LAYERSHELLQT

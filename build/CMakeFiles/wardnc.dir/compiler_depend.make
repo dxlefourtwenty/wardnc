@@ -1238,6 +1238,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtCore/QFileInfo \
   /usr/include/qt6/QtCore/QFileSystemWatcher \
   /usr/include/qt6/QtCore/QHash \
+  /usr/include/qt6/QtCore/QJsonArray \
   /usr/include/qt6/QtCore/QJsonDocument \
   /usr/include/qt6/QtCore/QJsonObject \
   /usr/include/qt6/QtCore/QJsonParseError \
@@ -1246,6 +1247,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtCore/QMargins \
   /usr/include/qt6/QtCore/QObject \
   /usr/include/qt6/QtCore/QPointer \
+  /usr/include/qt6/QtCore/QProcess \
   /usr/include/qt6/QtCore/QProcessEnvironment \
   /usr/include/qt6/QtCore/QPropertyAnimation \
   /usr/include/qt6/QtCore/QRect \
@@ -1335,6 +1337,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtCore/qiodevicebase.h \
   /usr/include/qt6/QtCore/qiterable.h \
   /usr/include/qt6/QtCore/qiterator.h \
+  /usr/include/qt6/QtCore/qjsonarray.h \
   /usr/include/qt6/QtCore/qjsondocument.h \
   /usr/include/qt6/QtCore/qjsonobject.h \
   /usr/include/qt6/QtCore/qjsonparseerror.h \
@@ -4078,6 +4081,10 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o:
 
 /usr/lib/libEGL.so.1:
 
+/usr/lib/ld-linux-x86-64.so.2:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/libgcc.a:
+
 /usr/lib/cmake/Qt6/QtPublicTargetHelpers.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicSbomPythonHelpers.cmake:
@@ -4679,6 +4686,10 @@ wardnc_autogen/moc_predefs.h:
 /usr/include/qt6/QtCore/qshareddata_impl.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginTargetsPrecheck.cmake:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o:
+
+/usr/include/bits/types/sigset_t.h:
 
 /usr/include/qt6/QtCore/qline.h:
 
@@ -5284,8 +5295,6 @@ wardnc_autogen/mocs_compilation.cpp:
 
 /usr/include/c++/15.2.1/string:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/libgcc.a:
-
 /usr/include/qt6/QtCore/qset.h:
 
 /usr/include/qt6/QtGui/qaction.h:
@@ -5886,10 +5895,6 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWbmpPluginTargetsPrecheck.cmake:
 
-/usr/include/bits/types/sigset_t.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtendS.o:
-
 /usr/include/c++/15.2.1/iterator:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWebpPluginAdditionalTargetInfo.cmake:
@@ -6082,8 +6087,6 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 
 /usr/include/qt6/QtCore/QSize:
 
-/usr/include/bits/math-vector.h:
-
 /usr/include/bits/fp-logb.h:
 
 /usr/include/bits/mathcalls-macros.h:
@@ -6114,6 +6117,10 @@ CMakeFiles/wardnc.dir/wardnc_autogen/mocs_compilation.cpp.o:
 
 /usr/include/c++/15.2.1/bits/quoted_string.h:
 
+/usr/include/bits/math-vector.h:
+
+/usr/include/qt6/QtCore/qjsonarray.h:
+
 /usr/include/c++/15.2.1/codecvt:
 
 /usr/include/qt6/QtCore/qabstracteventdispatcher.h:
@@ -6132,6 +6139,8 @@ CMakeFiles/wardnc.dir/wardnc_autogen/mocs_compilation.cpp.o:
 
 /usr/include/qt6/QtCore/QFileInfo:
 
+/usr/include/qt6/QtCore/QJsonArray:
+
 /usr/include/qt6/QtCore/qcborcommon.h:
 
 /usr/include/qt6/QtCore/QJsonDocument:
@@ -6139,6 +6148,8 @@ CMakeFiles/wardnc.dir/wardnc_autogen/mocs_compilation.cpp.o:
 /usr/lib/libwayland-client.so.0:
 
 /usr/include/qt6/QtCore/QJsonObject:
+
+/usr/include/qt6/QtCore/QProcess:
 
 /usr/include/qt6/QtCore/QProcessEnvironment:
 
@@ -6341,5 +6352,3 @@ wardnc_autogen/UVLADIE3JM/moc_WardNcControl.cpp:
 /usr/include/bits/typesizes.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o:
-
-/usr/lib/ld-linux-x86-64.so.2:
