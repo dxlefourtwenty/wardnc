@@ -407,7 +407,8 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: \
  /usr/include/qt6/QtCore/QStandardPaths \
  /usr/include/qt6/QtCore/qstandardpaths.h \
  /home/dxle/builds/wardnc/src/NotificationCenterPanel.h \
- /usr/include/qt6/QtCore/QDateTime \
+ /usr/include/qt6/QtCore/QDateTime /usr/include/qt6/QtCore/QEasingCurve \
+ /usr/include/qt6/QtCore/qeasingcurve.h \
  /usr/include/qt6/QtCore/QFileSystemWatcher \
  /usr/include/qt6/QtCore/qfilesystemwatcher.h \
  /usr/include/qt6/QtCore/QHash /usr/include/qt6/QtCore/QList \

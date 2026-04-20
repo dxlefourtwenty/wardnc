@@ -267,6 +267,7 @@
   /usr/include/locale.h \
   /usr/include/pthread.h \
   /usr/include/qt6/QtCore/QDateTime \
+  /usr/include/qt6/QtCore/QEasingCurve \
   /usr/include/qt6/QtCore/QFileSystemWatcher \
   /usr/include/qt6/QtCore/QHash \
   /usr/include/qt6/QtCore/QList \
@@ -319,6 +320,7 @@
   /usr/include/qt6/QtCore/qdatetime.h \
   /usr/include/qt6/QtCore/qdeadlinetimer.h \
   /usr/include/qt6/QtCore/qdebug.h \
+  /usr/include/qt6/QtCore/qeasingcurve.h \
   /usr/include/qt6/QtCore/qendian.h \
   /usr/include/qt6/QtCore/qeventloop.h \
   /usr/include/qt6/QtCore/qexceptionhandling.h \

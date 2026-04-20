@@ -239,6 +239,11 @@ NotificationCenterPanel::NotificationCenterPanel(WardNcConfigLoader *configLoade
             this, &NotificationCenterPanel::handleHistoryFileChanged);
     connect(&historyWatcher_, &QFileSystemWatcher::directoryChanged,
             this, &NotificationCenterPanel::handleHistoryDirectoryChanged);
+#if WARDNC_HAS_LAYERSHELLQT
+    layerShellAnimationTimer_.setInterval(16);
+    connect(&layerShellAnimationTimer_, &QTimer::timeout, this,
+            &NotificationCenterPanel::advanceLayerShellAnimation);
+#endif
 
     if (configLoader_) {
         config_ = configLoader_->config();
@@ -804,7 +809,7 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
 
     auto *appLabel = new QLabel(card);
     appLabel->setObjectName(QStringLiteral("appNameLabel"));
-    appLabel->setText(sanitizeText(entry->appName));
+    appLabel->setText(displayAppName(entry->appName));
     appLabel->setVisible(config_.panel.showAppName && !appLabel->text().trimmed().isEmpty());
 
     auto *timestampLabel = new QLabel(card);
@@ -998,6 +1003,16 @@ QString NotificationCenterPanel::normalizedSummary(const QString &summary, const
     return config_.text.summaryFallback;
 }
 
+QString NotificationCenterPanel::displayAppName(const QString &appName) const
+{
+    const QString cleaned = sanitizeText(appName).trimmed();
+    if (cleaned.compare(QStringLiteral("notify-send"), Qt::CaseInsensitive) == 0) {
+        return {};
+    }
+
+    return cleaned;
+}
+
 QString NotificationCenterPanel::timestampText(const QDateTime &timestamp) const
 {
     if (!timestamp.isValid()) {
@@ -1175,22 +1190,8 @@ QPoint NotificationCenterPanel::openPosition(const QRect &availableGeometry, int
 
 QPoint NotificationCenterPanel::closedPosition(const QRect &availableGeometry, int panelHeight) const
 {
-    int x = 0;
-    if (anchorAtRight()) {
-        x = usesLayerShellPlacement()
-            ? availableGeometry.left() - width()
-            : availableGeometry.right() + 1;
-    } else {
-        x = usesLayerShellPlacement()
-            ? availableGeometry.right() + 1
-            : availableGeometry.left() - width();
-    }
-
-    const int y = anchorAtTop()
-        ? availableGeometry.top() + config_.layout.marginTop
-        : availableGeometry.bottom() - config_.layout.marginBottom - panelHeight + 1;
-
-    return QPoint(x, y);
+    const QPoint opened = openPosition(availableGeometry, panelHeight);
+    return QPoint(opened.x() + closedPanelOffset(), opened.y());
 }
 
 bool NotificationCenterPanel::anchorAtRight() const
@@ -1232,7 +1233,9 @@ QRect NotificationCenterPanel::layerShellPlacementGeometry(QScreen *screen) cons
 
 int NotificationCenterPanel::closedPanelOffset() const
 {
-    const int hiddenDistance = qMax(0, width());
+    const int hiddenDistance = qMax(
+        0,
+        width() + qMax(0, config_.animation.slideDistance));
     return anchorAtRight() ? hiddenDistance : -hiddenDistance;
 }
 
@@ -1347,6 +1350,13 @@ void NotificationCenterPanel::refreshWindowPlacement(bool animated)
         ? layerShellPlacementGeometry(screen)
         : available;
 
+#if WARDNC_HAS_LAYERSHELLQT
+    if (usesLayerShellPlacement()) {
+        configureLayerShell(screen, panelHeight);
+        layerShellPlacementGeometryCache_ = placementGeometry;
+    }
+#endif
+
     QPoint target = open_
         ? openPosition(placementGeometry, panelHeight)
         : closedPosition(placementGeometry, panelHeight);
@@ -1361,24 +1371,15 @@ void NotificationCenterPanel::refreshWindowPlacement(bool animated)
 
 #if WARDNC_HAS_LAYERSHELLQT
     if (usesLayerShellPlacement()) {
-        configureLayerShell(screen, panelHeight);
-        const QPoint pinnedOpenPosition = envFlagEnabled("WARDNC_TEST_WAYBAR_POSITION", false)
-            ? QPoint(available.left() + 48,
-                     qBound(available.top(),
-                            available.top() + config_.layout.marginTop,
-                            available.bottom() - panelHeight + 1))
-            : openPosition(placementGeometry, panelHeight);
-
-        layerShellPosition_ = pinnedOpenPosition;
-        applyLayerShellPlacement(layerShellPosition_, placementGeometry);
-
-        const int targetOffset = panelOffsetForState(open_);
-        if (animated) {
-            animatePanelOffsetTo(targetOffset);
-        } else {
-            applyPanelOffset(targetOffset);
-        }
+        applyPanelOffset(0);
         updatePanelRootGeometry();
+
+        if (animated) {
+            animateToPosition(target);
+        } else {
+            layerShellPosition_ = target;
+            applyLayerShellPlacement(layerShellPosition_, placementGeometry);
+        }
 
         const int handleWidth = sideHandle_->width();
         const int handleHeight = sideHandle_->height();
@@ -1443,6 +1444,10 @@ void NotificationCenterPanel::applyPanelVisibility(bool animated)
         return;
     }
 
+    if (usesLayerShellPlacement()) {
+        return;
+    }
+
     if (!isVisible()) {
         return;
     }
@@ -1464,20 +1469,15 @@ void NotificationCenterPanel::applyPanelVisibility(bool animated)
 
 void NotificationCenterPanel::animateToPosition(const QPoint &position)
 {
-    if (!config_.animation.enabled) {
-        if (usesLayerShellPlacement()) {
+    if (usesLayerShellPlacement()) {
 #if WARDNC_HAS_LAYERSHELLQT
-            QScreen *screen = resolveScreen();
-            if (!screen) {
-                return;
-            }
-
-            layerShellPosition_ = position;
-            applyLayerShellPlacement(layerShellPosition_, layerShellPlacementGeometry(screen));
+        animateLayerShellTo(position);
 #endif
-        } else {
-            move(position);
-        }
+        return;
+    }
+
+    if (!config_.animation.enabled) {
+        move(position);
         return;
     }
 
@@ -1502,13 +1502,8 @@ void NotificationCenterPanel::animateToPosition(const QPoint &position)
         const QPoint current = value.toPoint();
         if (usesLayerShellPlacement()) {
 #if WARDNC_HAS_LAYERSHELLQT
-            QScreen *screen = resolveScreen();
-            if (!screen) {
-                return;
-            }
-
             layerShellPosition_ = current;
-            applyLayerShellPlacement(layerShellPosition_, layerShellPlacementGeometry(screen));
+            applyLayerShellPlacement(layerShellPosition_, layerShellPlacementGeometryCache_);
 #endif
             return;
         }
@@ -1533,6 +1528,57 @@ void NotificationCenterPanel::animateToPosition(const QPoint &position)
     fadeAnimation_->setStartValue(windowOpacity());
     fadeAnimation_->setEndValue(open_ ? 1.0 : 0.96);
     fadeAnimation_->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void NotificationCenterPanel::animateLayerShellTo(const QPoint &position)
+{
+#if WARDNC_HAS_LAYERSHELLQT
+    layerShellAnimationTimer_.stop();
+
+    if (!config_.animation.enabled || config_.animation.durationMs <= 0) {
+        layerShellPosition_ = position;
+        applyLayerShellPlacement(layerShellPosition_, layerShellPlacementGeometryCache_);
+        return;
+    }
+
+    layerShellAnimationStart_ = layerShellPosition_;
+    layerShellAnimationEnd_ = position;
+    layerShellAnimationDurationMs_ = config_.animation.durationMs;
+    layerShellAnimationStartMs_ = QDateTime::currentMSecsSinceEpoch();
+    layerShellAnimationEasing_ = QEasingCurve(easingFromName(config_.animation.easing));
+    layerShellAnimationTimer_.start();
+    advanceLayerShellAnimation();
+#else
+    Q_UNUSED(position);
+#endif
+}
+
+void NotificationCenterPanel::advanceLayerShellAnimation()
+{
+#if WARDNC_HAS_LAYERSHELLQT
+    if (!layerShellAnimationDurationMs_) {
+        layerShellAnimationTimer_.stop();
+        return;
+    }
+
+    const qint64 elapsedMs = QDateTime::currentMSecsSinceEpoch() - layerShellAnimationStartMs_;
+    const qreal progress = qBound<qreal>(0.0,
+                                         static_cast<qreal>(elapsedMs) /
+                                             static_cast<qreal>(layerShellAnimationDurationMs_),
+                                         1.0);
+    const qreal eased = layerShellAnimationEasing_.valueForProgress(progress);
+    const int x = layerShellAnimationStart_.x() +
+        static_cast<int>((layerShellAnimationEnd_.x() - layerShellAnimationStart_.x()) * eased);
+    const int y = layerShellAnimationStart_.y() +
+        static_cast<int>((layerShellAnimationEnd_.y() - layerShellAnimationStart_.y()) * eased);
+
+    layerShellPosition_ = QPoint(x, y);
+    applyLayerShellPlacement(layerShellPosition_, layerShellPlacementGeometryCache_);
+
+    if (progress >= 1.0) {
+        layerShellAnimationTimer_.stop();
+    }
+#endif
 }
 
 #if WARDNC_HAS_LAYERSHELLQT
@@ -1609,6 +1655,10 @@ void NotificationCenterPanel::applyLayerShellPlacement(const QPoint &position,
     }
 
     layerShellWindow_->setMargins(QMargins(left, top, right, bottom));
+    update();
+    if (QWindow *window = windowHandle()) {
+        window->requestUpdate();
+    }
 }
 #else
 void NotificationCenterPanel::configureLayerShell(QScreen *, int)
@@ -1786,7 +1836,7 @@ void NotificationCenterPanel::appendNotificationHistory(const NotificationEntry 
         return;
     }
 
-    const QString appName = sanitizeText(entry->appName).trimmed();
+    const QString appName = displayAppName(entry->appName);
     const QString summary = normalizedSummary(entry->summary, entry->body).trimmed();
     const QString body = sanitizeText(entry->body).trimmed();
     if (appName.isEmpty() && summary.isEmpty() && body.isEmpty()) {

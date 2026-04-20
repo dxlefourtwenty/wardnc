@@ -321,6 +321,8 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: \
  /usr/include/qt6/QtCore/q20utility.h /usr/include/qt6/QtCore/qobject.h \
  /usr/include/qt6/QtCore/qobject_impl.h \
  /usr/include/qt6/QtCore/qbindingstorage.h \
+ /usr/include/qt6/QtCore/QEasingCurve \
+ /usr/include/qt6/QtCore/qeasingcurve.h \
  /usr/include/qt6/QtCore/QFileSystemWatcher \
  /usr/include/qt6/QtCore/qfilesystemwatcher.h \
  /usr/include/qt6/QtCore/QHash /usr/include/qt6/QtCore/QList \
@@ -397,10 +399,8 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: \
  /usr/include/c++/15.2.1/bits/fs_dir.h \
  /usr/include/c++/15.2.1/bits/fs_ops.h /usr/include/qt6/QtCore/qfile.h \
  /usr/include/qt6/QtCore/qfileinfo.h /usr/include/qt6/QtCore/qtimezone.h \
- /usr/include/qt6/QtCore/QEasingCurve \
- /usr/include/qt6/QtCore/qeasingcurve.h /usr/include/qt6/QtCore/QFile \
- /usr/include/qt6/QtCore/QFileInfo /usr/include/qt6/QtGui/QCursor \
- /usr/include/qt6/QtGui/QGuiApplication \
+ /usr/include/qt6/QtCore/QFile /usr/include/qt6/QtCore/QFileInfo \
+ /usr/include/qt6/QtGui/QCursor /usr/include/qt6/QtGui/QGuiApplication \
  /usr/include/qt6/QtGui/qguiapplication.h \
  /usr/include/qt6/QtCore/qcoreapplication.h \
  /usr/include/qt6/QtCore/qcoreevent.h \

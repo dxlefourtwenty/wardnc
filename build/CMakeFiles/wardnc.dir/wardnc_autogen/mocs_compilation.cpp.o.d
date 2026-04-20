@@ -322,6 +322,8 @@ CMakeFiles/wardnc.dir/wardnc_autogen/mocs_compilation.cpp.o: \
  /usr/include/qt6/QtCore/q20utility.h /usr/include/qt6/QtCore/qobject.h \
  /usr/include/qt6/QtCore/qobject_impl.h \
  /usr/include/qt6/QtCore/qbindingstorage.h \
+ /usr/include/qt6/QtCore/QEasingCurve \
+ /usr/include/qt6/QtCore/qeasingcurve.h \
  /usr/include/qt6/QtCore/QFileSystemWatcher \
  /usr/include/qt6/QtCore/qfilesystemwatcher.h \
  /usr/include/qt6/QtCore/QHash /usr/include/qt6/QtCore/QList \

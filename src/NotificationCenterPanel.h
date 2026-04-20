@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QDateTime>
+#include <QEasingCurve>
 #include <QFileSystemWatcher>
 #include <QHash>
 #include <QList>
@@ -162,6 +163,7 @@ private:
     QString stripMarkup(const QString &text) const;
     QString decodeEntities(const QString &text) const;
     QString normalizedSummary(const QString &summary, const QString &body) const;
+    QString displayAppName(const QString &appName) const;
     QString timestampText(const QDateTime &timestamp) const;
 
     QPixmap notificationPixmap(const NotificationEntry *entry) const;
@@ -189,6 +191,8 @@ private:
     void setPanelOpen(bool open, bool animated, bool writeState);
     void applyPanelVisibility(bool animated);
     void animateToPosition(const QPoint &position);
+    void animateLayerShellTo(const QPoint &position);
+    void advanceLayerShellAnimation();
     void configureLayerShell(QScreen *screen, int panelHeight);
     void applyLayerShellPlacement(const QPoint &position, const QRect &availableGeometry);
 
@@ -247,5 +251,12 @@ private:
 #if WARDNC_HAS_LAYERSHELLQT
     LayerShellQt::Window *layerShellWindow_ = nullptr;
     QPoint layerShellPosition_;
+    QRect layerShellPlacementGeometryCache_;
+    QTimer layerShellAnimationTimer_;
+    QPoint layerShellAnimationStart_;
+    QPoint layerShellAnimationEnd_;
+    QEasingCurve layerShellAnimationEasing_ {QEasingCurve::OutCubic};
+    qint64 layerShellAnimationStartMs_ = 0;
+    int layerShellAnimationDurationMs_ = 0;
 #endif
 };

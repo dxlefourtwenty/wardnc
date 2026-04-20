@@ -281,6 +281,7 @@ wardnc_autogen/timestamp: /home/dxle/builds/wardnc/CMakeLists.txt \
   /usr/include/locale.h \
   /usr/include/pthread.h \
   /usr/include/qt6/QtCore/QDateTime \
+  /usr/include/qt6/QtCore/QEasingCurve \
   /usr/include/qt6/QtCore/QFileSystemWatcher \
   /usr/include/qt6/QtCore/QHash \
   /usr/include/qt6/QtCore/QList \
@@ -337,6 +338,7 @@ wardnc_autogen/timestamp: /home/dxle/builds/wardnc/CMakeLists.txt \
   /usr/include/qt6/QtCore/qdatetime.h \
   /usr/include/qt6/QtCore/qdeadlinetimer.h \
   /usr/include/qt6/QtCore/qdebug.h \
+  /usr/include/qt6/QtCore/qeasingcurve.h \
   /usr/include/qt6/QtCore/qendian.h \
   /usr/include/qt6/QtCore/qeventloop.h \
   /usr/include/qt6/QtCore/qexceptionhandling.h \
@@ -1335,6 +1337,12 @@ wardnc_autogen/timestamp: /home/dxle/builds/wardnc/CMakeLists.txt \
 
 /usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsTargets-relwithdebinfo.cmake:
 
+/usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersionImpl.cmake:
+
+/usr/lib/cmake/Qt6Gui/Qt6QWaylandQtShellIntegrationPluginConfig.cmake:
+
+/usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersion.cmake:
+
 /usr/lib/cmake/Qt6Gui/Qt6QLibInputPluginTargets.cmake:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h:
@@ -1653,6 +1661,8 @@ wardnc_autogen/timestamp: /home/dxle/builds/wardnc/CMakeLists.txt \
 
 /usr/include/c++/15.2.1/new:
 
+/usr/include/qt6/QtCore/qeasingcurve.h:
+
 /usr/include/c++/15.2.1/map:
 
 /usr/include/bits/types/__FILE.h:
@@ -1788,8 +1798,6 @@ CMakeFiles/4.3.1/CMakeCXXCompiler.cmake:
 /usr/include/bits/atomic_wide_counter.h:
 
 /usr/include/c++/15.2.1/tuple:
-
-/usr/include/errno.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QTsLibPluginTargets-relwithdebinfo.cmake:
 
@@ -2187,6 +2195,10 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 
 /usr/include/linux/stddef.h:
 
+/usr/include/errno.h:
+
+/usr/include/qt6/QtCore/QEasingCurve:
+
 /usr/include/qt6/QtCore/QFileSystemWatcher:
 
 /usr/include/qt6/QtCore/qhash.h:
@@ -2214,8 +2226,6 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 /usr/lib/cmake/Qt6/QtPublicCMakeVersionHelpers.cmake:
 
 /usr/lib/cmake/Qt6/Qt6TargetsPrecheck.cmake:
-
-/usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersionImpl.cmake:
 
 /usr/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsTargets.cmake:
 
@@ -2698,7 +2708,3 @@ wardnc_autogen/moc_predefs.h:
 /usr/lib/cmake/Qt6/QtPublicTargetHelpers.cmake:
 
 /usr/lib/cmake/Qt6Core/Qt6CoreConfigExtras.cmake:
-
-/usr/lib/cmake/Qt6Gui/Qt6QWaylandQtShellIntegrationPluginConfig.cmake:
-
-/usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersion.cmake:

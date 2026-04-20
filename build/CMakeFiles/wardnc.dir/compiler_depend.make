@@ -281,6 +281,7 @@ wardnc_autogen/timestamp: /home/dxle/builds/wardnc/CMakeLists.txt \
   /usr/include/locale.h \
   /usr/include/pthread.h \
   /usr/include/qt6/QtCore/QDateTime \
+  /usr/include/qt6/QtCore/QEasingCurve \
   /usr/include/qt6/QtCore/QFileSystemWatcher \
   /usr/include/qt6/QtCore/QHash \
   /usr/include/qt6/QtCore/QList \
@@ -337,6 +338,7 @@ wardnc_autogen/timestamp: /home/dxle/builds/wardnc/CMakeLists.txt \
   /usr/include/qt6/QtCore/qdatetime.h \
   /usr/include/qt6/QtCore/qdeadlinetimer.h \
   /usr/include/qt6/QtCore/qdebug.h \
+  /usr/include/qt6/QtCore/qeasingcurve.h \
   /usr/include/qt6/QtCore/qendian.h \
   /usr/include/qt6/QtCore/qeventloop.h \
   /usr/include/qt6/QtCore/qexceptionhandling.h \
@@ -3157,6 +3159,7 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/qt6/QtCore/QDateTime \
   /usr/include/qt6/QtCore/QDebug \
   /usr/include/qt6/QtCore/QDir \
+  /usr/include/qt6/QtCore/QEasingCurve \
   /usr/include/qt6/QtCore/QFileSystemWatcher \
   /usr/include/qt6/QtCore/QHash \
   /usr/include/qt6/QtCore/QList \
@@ -3223,6 +3226,7 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/qt6/QtCore/qdebug.h \
   /usr/include/qt6/QtCore/qdir.h \
   /usr/include/qt6/QtCore/qdirlisting.h \
+  /usr/include/qt6/QtCore/qeasingcurve.h \
   /usr/include/qt6/QtCore/qendian.h \
   /usr/include/qt6/QtCore/qeventloop.h \
   /usr/include/qt6/QtCore/qexceptionhandling.h \
@@ -3692,6 +3696,7 @@ CMakeFiles/wardnc.dir/wardnc_autogen/mocs_compilation.cpp.o: wardnc_autogen/mocs
   /usr/include/math.h \
   /usr/include/pthread.h \
   /usr/include/qt6/QtCore/QDateTime \
+  /usr/include/qt6/QtCore/QEasingCurve \
   /usr/include/qt6/QtCore/QFileSystemWatcher \
   /usr/include/qt6/QtCore/QHash \
   /usr/include/qt6/QtCore/QList \
@@ -3749,6 +3754,7 @@ CMakeFiles/wardnc.dir/wardnc_autogen/mocs_compilation.cpp.o: wardnc_autogen/mocs
   /usr/include/qt6/QtCore/qdatetime.h \
   /usr/include/qt6/QtCore/qdeadlinetimer.h \
   /usr/include/qt6/QtCore/qdebug.h \
+  /usr/include/qt6/QtCore/qeasingcurve.h \
   /usr/include/qt6/QtCore/qendian.h \
   /usr/include/qt6/QtCore/qeventloop.h \
   /usr/include/qt6/QtCore/qexceptionhandling.h \
@@ -4043,10 +4049,6 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o:
 /usr/lib/libXdmcp.so.6:
 
 /usr/lib/libXau.so.6:
-
-/usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersion.cmake:
-
-/usr/lib/cmake/Qt6Gui/Qt6QWaylandQtShellIntegrationPluginConfig.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicTargetHelpers.cmake:
 
@@ -4436,8 +4438,6 @@ wardnc_autogen/moc_predefs.h:
 
 /usr/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsTargets.cmake:
 
-/usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersionImpl.cmake:
-
 /usr/lib/cmake/Qt6/Qt6TargetsPrecheck.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicCMakeVersionHelpers.cmake:
@@ -4463,6 +4463,12 @@ wardnc_autogen/moc_predefs.h:
 /usr/include/qt6/QtCore/qhash.h:
 
 /usr/include/qt6/QtCore/QFileSystemWatcher:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h:
+
+/usr/include/qt6/QtCore/QEasingCurve:
+
+/usr/include/errno.h:
 
 /usr/include/linux/sched/types.h:
 
@@ -4842,12 +4848,6 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QTsLibPluginTargets-relwithdebinfo.cmake:
 
-/usr/include/errno.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h:
-
-/usr/include/qt6/QtCore/QEasingCurve:
-
 /usr/include/c++/15.2.1/tuple:
 
 /usr/include/qt6/QtCore/qstringalgorithms.h:
@@ -4998,11 +4998,11 @@ CMakeFiles/4.3.1/CMakeCXXCompiler.cmake:
 
 /usr/include/c++/15.2.1/map:
 
+/usr/include/qt6/QtCore/qeasingcurve.h:
+
 /usr/include/c++/15.2.1/new:
 
 /usr/lib/cmake/Qt6Gui/Qt6QMinimalEglIntegrationPluginTargetsPrecheck.cmake:
-
-/usr/include/qt6/QtCore/qeasingcurve.h:
 
 /usr/include/bits/thread-shared-types.h:
 
@@ -5363,6 +5363,12 @@ wardnc_autogen/mocs_compilation.cpp:
 /usr/include/c++/15.2.1/bits/ostream.tcc:
 
 /usr/include/qt6/QtCore/qcommandlineparser.h:
+
+/usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersion.cmake:
+
+/usr/lib/cmake/Qt6Gui/Qt6QWaylandQtShellIntegrationPluginConfig.cmake:
+
+/usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersionImpl.cmake:
 
 CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o:
 
