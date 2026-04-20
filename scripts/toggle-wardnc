@@ -1,0 +1,330 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WARDNC_BIN="${WARDNC_BIN:-$HOME/builds/wardnc/build/wardnc}"
+WARDNC_QT_PLATFORM="${WARDNC_QT_PLATFORM:-wayland}"
+WARDNC_QT_SHELL_INTEGRATION="${WARDNC_QT_SHELL_INTEGRATION:-layer-shell}"
+WARDNC_TEST_WAYBAR_POSITION="${WARDNC_TEST_WAYBAR_POSITION:-0}"
+WARDNC_TAKEOVER_NOTIFICATIONS="${WARDNC_TAKEOVER_NOTIFICATIONS:-0}"
+WARDNC_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(/usr/bin/id -u)}"
+STATE_DIR="${WARDNC_RUNTIME_DIR}/wardnc"
+STATE_FILE="${WARDNC_STATE_FILE:-${STATE_DIR}/panel.state}"
+NOTIFY_SEND_BIN="${NOTIFY_SEND_BIN:-/usr/bin/notify-send}"
+PGREP_BIN="/usr/bin/pgrep"
+NOHUP_BIN="/usr/bin/nohup"
+SLEEP_BIN="/usr/bin/sleep"
+BUSCTL_BIN="/usr/bin/busctl"
+KILL_BIN="/usr/bin/kill"
+
+WARDNC_NOTIFY_APP_NAME="${WARDNC_NOTIFY_APP_NAME:-toggle-wardnc}"
+WARDNC_NOTIFY_STACK_TAG="${WARDNC_NOTIFY_STACK_TAG:-toggle-wardnc}"
+
+usage() {
+    printf 'Usage: %s [--open|--close|--toggle|--status] [--dry-run]\n' "${0##*/}"
+}
+
+normalize_state() {
+    local value="${1:-}"
+
+    case "$value" in
+        open|opened|1|true|on)
+            printf 'open\n'
+            ;;
+        close|closed|0|false|off)
+            printf 'closed\n'
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+read_state() {
+    if [[ ! -r "$STATE_FILE" ]]; then
+        printf 'closed\n'
+        return
+    fi
+
+    local raw=""
+    local compact=""
+
+    raw="$(/usr/bin/head -n 1 "$STATE_FILE" 2>/dev/null || true)"
+    compact="$(printf '%s' "$raw" | /usr/bin/tr '[:upper:]' '[:lower:]' | /usr/bin/tr -d '[:space:]')"
+
+    if normalize_state "$compact" >/dev/null 2>&1; then
+        normalize_state "$compact"
+        return
+    fi
+
+    printf 'closed\n'
+}
+
+write_state() {
+    local state="$1"
+    local tmp_file=""
+
+    /usr/bin/mkdir -p "$STATE_DIR"
+    tmp_file="$(/usr/bin/mktemp "${STATE_DIR}/.panel.state.XXXXXX")"
+    printf '%s\n' "$state" > "$tmp_file"
+    /usr/bin/mv "$tmp_file" "$STATE_FILE"
+}
+
+notify_error() {
+    local message="$1"
+
+    if [[ -x "$NOTIFY_SEND_BIN" ]]; then
+        "$NOTIFY_SEND_BIN" \
+            -a "$WARDNC_NOTIFY_APP_NAME" \
+            -h "string:x-dunst-stack-tag:$WARDNC_NOTIFY_STACK_TAG" \
+            -u critical \
+            -t 3500 \
+            "wardnc" \
+            "$message" >/dev/null 2>&1 || true
+    fi
+}
+
+is_wardnc_running() {
+    "$PGREP_BIN" -x wardnc >/dev/null 2>&1
+}
+
+start_wardnc() {
+    if [[ ! -x "$WARDNC_BIN" ]]; then
+        return 1
+    fi
+
+    QT_QPA_PLATFORM="$WARDNC_QT_PLATFORM" \
+        QT_WAYLAND_SHELL_INTEGRATION="$WARDNC_QT_SHELL_INTEGRATION" \
+        WARDNC_TEST_WAYBAR_POSITION="$WARDNC_TEST_WAYBAR_POSITION" \
+        WARDNC_STATE_FILE="$STATE_FILE" \
+        XDG_RUNTIME_DIR="$WARDNC_RUNTIME_DIR" \
+        "$NOHUP_BIN" "$WARDNC_BIN" >/dev/null 2>&1 &
+
+    for _ in {1..30}; do
+        if is_wardnc_running; then
+            return 0
+        fi
+        "$SLEEP_BIN" 0.05
+    done
+
+    return 1
+}
+
+wardnc_control_ready() {
+    if [[ ! -x "$BUSCTL_BIN" ]]; then
+        return 1
+    fi
+
+    "$BUSCTL_BIN" --user call \
+        org.dxle.wardnc \
+        /org/dxle/wardnc \
+        org.freedesktop.DBus.Peer \
+        Ping >/dev/null 2>&1
+}
+
+wait_for_control() {
+    for _ in {1..40}; do
+        if wardnc_control_ready; then
+            return 0
+        fi
+        "$SLEEP_BIN" 0.05
+    done
+
+    return 1
+}
+
+invoke_control_with_retry() {
+    local method="$1"
+    local bus_method=""
+
+    case "$method" in
+        open)
+            bus_method="Open"
+            ;;
+        close)
+            bus_method="Close"
+            ;;
+        toggle)
+            bus_method="Toggle"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+
+    for _ in {1..40}; do
+        if [[ -x "$BUSCTL_BIN" ]] && "$BUSCTL_BIN" --user call \
+            org.dxle.wardnc \
+            /org/dxle/wardnc \
+            org.dxle.wardnc.Control \
+            "$bus_method" >/dev/null 2>&1; then
+            return 0
+        fi
+        "$SLEEP_BIN" 0.05
+    done
+
+    return 1
+}
+
+notification_owner_pid() {
+    [[ -x "$BUSCTL_BIN" ]] || return 1
+
+    local owner=""
+    owner="$("$BUSCTL_BIN" --user call \
+        org.freedesktop.DBus \
+        /org/freedesktop/DBus \
+        org.freedesktop.DBus \
+        GetNameOwner \
+        s org.freedesktop.Notifications 2>/dev/null | /usr/bin/awk '{print $2}' | /usr/bin/tr -d '"' || true)"
+    [[ -n "$owner" ]] || return 1
+
+    "$BUSCTL_BIN" --user call \
+        org.freedesktop.DBus \
+        /org/freedesktop/DBus \
+        org.freedesktop.DBus \
+        GetConnectionUnixProcessID \
+        s "$owner" 2>/dev/null | /usr/bin/awk '{print $2}'
+}
+
+is_competing_notification_owner() {
+    local pid="$1"
+    local cmdline=""
+
+    [[ "$pid" =~ ^[0-9]+$ ]] || return 1
+    [[ -r "/proc/${pid}/cmdline" ]] || return 1
+
+    cmdline="$(/usr/bin/tr '\0' ' ' < "/proc/${pid}/cmdline" 2>/dev/null || true)"
+    [[ -n "$cmdline" ]] || return 1
+
+    case "$cmdline" in
+        *wardnc*)
+            return 1
+            ;;
+        *dunst*|*mako*|*swaync*|*fnott*|*xfce4-notifyd*|*notification-daemon*)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+stop_competing_notification_owner() {
+    [[ "$WARDNC_TAKEOVER_NOTIFICATIONS" == "1" ]] || return 0
+
+    local owner_pid=""
+    owner_pid="$(notification_owner_pid || true)"
+    [[ -n "$owner_pid" ]] || return 0
+    is_competing_notification_owner "$owner_pid" || return 0
+
+    "$KILL_BIN" -TERM "$owner_pid" >/dev/null 2>&1 || true
+    for _ in {1..20}; do
+        if ! /usr/bin/kill -0 "$owner_pid" >/dev/null 2>&1; then
+            return 0
+        fi
+        "$SLEEP_BIN" 0.05
+    done
+    "$KILL_BIN" -9 "$owner_pid" >/dev/null 2>&1 || true
+}
+
+action="toggle"
+dry_run="no"
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --open)
+            action="open"
+            ;;
+        --close)
+            action="close"
+            ;;
+        --toggle)
+            action="toggle"
+            ;;
+        --status)
+            action="status"
+            ;;
+        --dry-run)
+            dry_run="yes"
+            ;;
+        --help|-h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage >&2
+            exit 2
+            ;;
+    esac
+    shift
+done
+
+if [[ "$action" == "status" ]]; then
+    printf '%s\n' "$(read_state)"
+    exit 0
+fi
+
+running="no"
+if is_wardnc_running; then
+    running="yes"
+fi
+
+current_state="$(read_state)"
+target_state="$current_state"
+
+if [[ "$action" == "toggle" ]]; then
+    if [[ "$running" == "no" ]]; then
+        target_state="open"
+    elif [[ "$current_state" == "open" ]]; then
+        target_state="closed"
+    else
+        target_state="open"
+    fi
+elif [[ "$action" == "open" ]]; then
+    target_state="open"
+elif [[ "$action" == "close" ]]; then
+    target_state="closed"
+else
+    usage >&2
+    exit 2
+fi
+
+if [[ "$dry_run" == "yes" ]]; then
+    printf 'binary=%s\n' "$WARDNC_BIN"
+    if [[ -x /usr/bin/sha256sum ]]; then
+        /usr/bin/sha256sum "$WARDNC_BIN"
+    fi
+    printf '%s\n' "$target_state"
+    exit 0
+fi
+
+if [[ "$running" == "no" ]]; then
+    if [[ "$target_state" == "closed" ]]; then
+        write_state "closed"
+        printf 'closed\n'
+        exit 0
+    fi
+
+    # Start from closed so the first open request animates from the edge.
+    write_state "closed"
+    stop_competing_notification_owner
+    if ! start_wardnc; then
+        notify_error "failed to start: $WARDNC_BIN"
+        exit 1
+    fi
+
+    wait_for_control || true
+fi
+
+# State file is the source of truth for the daemon watcher.
+write_state "$target_state"
+
+# Best-effort control call for immediate response; watcher still applies state.
+if [[ -x "$WARDNC_BIN" ]]; then
+    if [[ "$target_state" == "open" ]]; then
+        invoke_control_with_retry "open" || true
+    else
+        invoke_control_with_retry "close" || true
+    fi
+fi
+
+printf '%s\n' "$target_state"

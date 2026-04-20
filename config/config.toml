@@ -1,0 +1,73 @@
+# wardnc notification center config
+# paths accept ~, $VAR, and ${VAR}
+
+[layout]
+anchor = "top-right"
+screen = "HDMI-A-1"
+width = 420
+peek_width = 0
+outer_margin = 0
+top_margin = 24
+right_margin = 24
+bottom_margin = 24
+left_margin = 0
+minimum_height = 240
+above_windows = true
+focusable = true
+exclusive_zone = 0
+
+[panel]
+start_open = false
+open_on_new_notification = true
+close_on_escape = true
+close_on_background_click = false
+show_header = true
+show_footer = true
+show_app_name = true
+show_timestamp = true
+time_format_24h = true
+show_actions = true
+clear_button = true
+reverse_order = true
+max_visible_notifications = 120
+max_tracked_notifications = 400
+show_handle = true
+title = "Notifications"
+footer_text = "wardnc"
+
+[animation]
+enabled = true
+duration_ms = 220
+fade = true
+fade_duration_ms = 180
+slide_distance = 24
+easing = "out-cubic"
+
+[notifications]
+body_supported = true
+body_markup_supported = false
+body_hyperlinks_supported = false
+body_images_supported = false
+image_supported = true
+actions_supported = true
+action_icons_supported = false
+persistence_supported = true
+keep_on_reload = true
+ignore_transient = false
+auto_expire = false
+respect_timeout = true
+default_timeout_ms = 5000
+max_icon_size = 48
+history_enabled = true
+history_max_entries = 2000
+
+[text]
+strip_pango_markup = true
+decode_entities = true
+summary_fallback = "Notification"
+
+[paths]
+style_css = "~/.config/wardnc/style.css"
+colors_css = "~/.config/wardnc/colors.css"
+state_file = "${XDG_RUNTIME_DIR}/wardnc/panel.state"
+history_file = "~/.local/state/wardnc/notification-history.jsonl"

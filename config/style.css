@@ -1,0 +1,61 @@
+@import "./colors.css";
+
+:root {
+    --panel-radius: 20px;
+    --panel-border-width: 1px;
+    --panel-padding-x: 12px;
+    --panel-padding-y: 12px;
+    --panel-section-gap: 10px;
+
+    --header-height: 36px;
+    --header-radius: 10px;
+    --header-padding-x: 12px;
+    --header-gap: 8px;
+    --header-size: 14px;
+
+    --badge-height: 22px;
+    --badge-radius: 8px;
+    --badge-min-width: 30px;
+    --badge-padding-x: 14px;
+    --badge-size: 11px;
+
+    --notification-gap: 10px;
+
+    --card-radius: 14px;
+    --card-border-width: 1px;
+    --card-padding-x: 14px;
+    --card-padding-y: 14px;
+    --card-gap: 12px;
+
+    --icon-size: 40px;
+    --icon-radius: 10px;
+    --icon-padding: 6px;
+
+    --text-gap: 6px;
+    --summary-size: 14px;
+    --body-size: 13px;
+    --body-max-lines: 0;
+    --app-name-size: 12px;
+    --timestamp-size: 11px;
+
+    --dismiss-button-size: 20px;
+    --dismiss-size: 11px;
+
+    --action-gap: 6px;
+    --action-height: 28px;
+    --action-radius: 8px;
+    --action-size: 12px;
+    --action-min-width: 80px;
+    --action-horizontal-padding: 22px;
+
+    --footer-height: 34px;
+    --footer-radius: 10px;
+    --footer-padding-x: 12px;
+    --footer-size: 12px;
+
+    --clear-height: 26px;
+    --clear-radius: 8px;
+    --clear-size: 12px;
+    --clear-min-width: 86px;
+    --clear-padding-x: 16px;
+}
