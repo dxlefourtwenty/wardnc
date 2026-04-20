@@ -221,6 +221,48 @@ WaybarLayerInfo waybarLayerInfoOnScreen(QScreen *screen)
     return info;
 }
 
+int hyprReservedTopOnScreen(QScreen *screen)
+{
+    if (!screen) {
+        return 0;
+    }
+
+    QProcess process;
+    process.start(QStringLiteral("/usr/bin/hyprctl"),
+                  {QStringLiteral("-j"), QStringLiteral("monitors")});
+    if (!process.waitForFinished(180)) {
+        process.kill();
+        process.waitForFinished();
+        return 0;
+    }
+
+    if (process.exitStatus() != QProcess::NormalExit || process.exitCode() != 0) {
+        return 0;
+    }
+
+    QJsonParseError parseError;
+    const QJsonDocument doc = QJsonDocument::fromJson(process.readAllStandardOutput(), &parseError);
+    if (parseError.error != QJsonParseError::NoError || !doc.isArray()) {
+        return 0;
+    }
+
+    const QJsonArray monitors = doc.array();
+    for (const QJsonValue &monitorValue : monitors) {
+        const QJsonObject monitor = monitorValue.toObject();
+        if (monitor.value(QStringLiteral("name")).toString() != screen->name()) {
+            continue;
+        }
+
+        const QJsonArray reserved = monitor.value(QStringLiteral("reserved")).toArray();
+        if (reserved.size() >= 2) {
+            return qMax(0, reserved.at(1).toInt());
+        }
+        return 0;
+    }
+
+    return 0;
+}
+
 QColor styleColorValue(const QHash<QString, QString> &styleVariables,
                        const QString &name,
                        const QColor &fallback)
@@ -1577,7 +1619,9 @@ void NotificationCenterPanel::positionSideHandle()
 void NotificationCenterPanel::refreshWindowPlacement(bool animated)
 {
     constexpr int kMonitorBottomInsetPx = 80;
-    constexpr int kCenteredHeightPercent = 86;
+    constexpr int kCenteredHeightPercentWithWaybar = 90;
+    constexpr int kCenteredHeightPercentWithoutWaybar = 100;
+    constexpr int kWaybarGapReductionPx = 20;
 
     QScreen *screen = resolveScreen();
     if (!screen) {
@@ -1587,15 +1631,26 @@ void NotificationCenterPanel::refreshWindowPlacement(bool animated)
     const QRect available = screen->availableGeometry();
     const QRect screenGeometry = screen->geometry();
     const WaybarLayerInfo waybarInfo = waybarLayerInfoOnScreen(screen);
-    const bool waybarActive = anchorAtTop() && waybarInfo.level == 1;
+    const int reservedTop = hyprReservedTopOnScreen(screen);
+    const bool waybarActive = anchorAtTop() && !(waybarInfo.level == 1 && reservedTop == 0);
+    const int centeredHeightPercent = waybarActive
+        ? kCenteredHeightPercentWithWaybar
+        : kCenteredHeightPercentWithoutWaybar;
     const int topInset = waybarActive ? waybarInfo.topInset : 0;
-    const int topBound = screenGeometry.top() + topInset + config_.layout.marginTop;
-    const int bottomBound = screenGeometry.bottom() - kMonitorBottomInsetPx - config_.layout.marginBottom;
+    const int bottomInset = waybarActive ? kMonitorBottomInsetPx : 0;
+    const int effectiveTopMargin = waybarActive
+        ? qMax(0, config_.layout.marginTop - kWaybarGapReductionPx)
+        : config_.layout.marginTop;
+    const int topBound = screenGeometry.top() + topInset + effectiveTopMargin;
+    const int bottomBound = screenGeometry.bottom() - bottomInset - config_.layout.marginBottom;
     const int maxHeight = qMax(1, bottomBound - topBound + 1);
     const int preferredHeight = qMax(config_.layout.minimumHeight,
-                                     (maxHeight * kCenteredHeightPercent) / 100);
+                                     (maxHeight * centeredHeightPercent) / 100);
     setFixedWidth(qMax(1, config_.layout.width));
-    const int panelHeight = qBound(1, preferredHeight, maxHeight);
+    int panelHeight = qBound(1, preferredHeight, maxHeight);
+    if (anchorAtTop() && waybarActive) {
+        panelHeight = qBound(1, (panelHeight * 12) / 10, maxHeight);
+    }
     setFixedHeight(panelHeight);
 
     const QRect placementGeometry = usesLayerShellPlacement()
