@@ -26,6 +26,7 @@
 #include <QRegion>
 #include <QScreen>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QStandardPaths>
 #include <QTimer>
 #include <QTextStream>
@@ -331,12 +332,16 @@ void NotificationCenterPanel::buildUi()
     panelLayout_->addWidget(headerBar_);
 
     scrollArea_ = new QScrollArea(panelRoot_);
+    scrollArea_->setObjectName(QStringLiteral("notificationListScrollArea"));
     scrollArea_->setFrameShape(QFrame::NoFrame);
     scrollArea_->setWidgetResizable(true);
     scrollArea_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scrollArea_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    scrollArea_->viewport()->setObjectName(QStringLiteral("notificationListViewport"));
+    scrollArea_->verticalScrollBar()->setObjectName(QStringLiteral("notificationListScrollBar"));
 
     listContainer_ = new QWidget(scrollArea_);
+    listContainer_->setObjectName(QStringLiteral("notificationListContainer"));
     listLayout_ = new QVBoxLayout(listContainer_);
     listLayout_->setContentsMargins(0, 0, 0, 0);
     listLayout_->setSpacing(10);

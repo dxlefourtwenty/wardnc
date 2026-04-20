@@ -97,6 +97,19 @@ bool registerObject(QDBusConnection &bus, const QString &path, QObject *object)
     return false;
 }
 
+bool envFlagEnabled(const char *name, bool fallback)
+{
+    const QString raw = QString::fromUtf8(qgetenv(name)).trimmed().toLower();
+    if (raw.isEmpty()) {
+        return fallback;
+    }
+
+    return raw == QStringLiteral("1") ||
+           raw == QStringLiteral("true") ||
+           raw == QStringLiteral("yes") ||
+           raw == QStringLiteral("on");
+}
+
 } // namespace
 
 int main(int argc, char *argv[])
@@ -179,12 +192,20 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    const bool takeoverNotifications = envFlagEnabled("WARDNC_TAKEOVER_NOTIFICATIONS", false);
+    const auto queuePolicy = takeoverNotifications
+                                 ? QDBusConnectionInterface::ReplaceExistingService
+                                 : QDBusConnectionInterface::DontQueueService;
+    const auto replacementPolicy = takeoverNotifications
+                                       ? QDBusConnectionInterface::AllowReplacement
+                                       : QDBusConnectionInterface::DontAllowReplacement;
+
     const bool notificationServiceRegistered = registerService(
         bus,
         kNotificationService,
         QStringLiteral("Failed to acquire org.freedesktop.Notifications:"),
-        QDBusConnectionInterface::ReplaceExistingService,
-        QDBusConnectionInterface::AllowReplacement);
+        queuePolicy,
+        replacementPolicy);
 
     if (notificationServiceRegistered) {
         if (!registerObject(bus, kNotificationPath, &server)) {

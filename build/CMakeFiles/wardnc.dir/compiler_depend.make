@@ -1488,10 +1488,12 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtWidgets/QLayoutItem \
   /usr/include/qt6/QtWidgets/QPushButton \
   /usr/include/qt6/QtWidgets/QScrollArea \
+  /usr/include/qt6/QtWidgets/QScrollBar \
   /usr/include/qt6/QtWidgets/QVBoxLayout \
   /usr/include/qt6/QtWidgets/QWidget \
   /usr/include/qt6/QtWidgets/qabstractbutton.h \
   /usr/include/qt6/QtWidgets/qabstractscrollarea.h \
+  /usr/include/qt6/QtWidgets/qabstractslider.h \
   /usr/include/qt6/QtWidgets/qboxlayout.h \
   /usr/include/qt6/QtWidgets/qframe.h \
   /usr/include/qt6/QtWidgets/qgridlayout.h \
@@ -1500,6 +1502,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtWidgets/qlayoutitem.h \
   /usr/include/qt6/QtWidgets/qpushbutton.h \
   /usr/include/qt6/QtWidgets/qscrollarea.h \
+  /usr/include/qt6/QtWidgets/qscrollbar.h \
   /usr/include/qt6/QtWidgets/qsizepolicy.h \
   /usr/include/qt6/QtWidgets/qtwidgets-config.h \
   /usr/include/qt6/QtWidgets/qtwidgetsexports.h \
@@ -4050,6 +4053,10 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o:
 
 /usr/lib/libXau.so.6:
 
+/usr/lib/libX11.so.6:
+
+/usr/lib/libQt6WaylandClient.so.6:
+
 /usr/lib/cmake/Qt6/QtPublicTargetHelpers.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicSbomPythonHelpers.cmake:
@@ -4710,8 +4717,6 @@ wardnc_autogen/moc_predefs.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginConfig.cmake:
 
-/usr/lib/libX11.so.6:
-
 /usr/include/qt6/QtCore/qsharedpointer_impl.h:
 
 /usr/include/bits/long-double.h:
@@ -4840,6 +4845,8 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 
 /usr/include/c++/15.2.1/bits/fs_dir.h:
 
+/usr/include/qt6/QtWidgets/qabstractslider.h:
+
 /usr/include/c++/15.2.1/tr1/hypergeometric.tcc:
 
 /usr/include/bits/select.h:
@@ -4891,8 +4898,6 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 /usr/include/bits/xopen_lim.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QMngPluginTargets-relwithdebinfo.cmake:
-
-/usr/include/c++/15.2.1/backward/auto_ptr.h:
 
 /usr/lib/libm.so.6:
 
@@ -5511,8 +5516,6 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o:
 /usr/share/cmake/Modules/CMakeSystemSpecificInformation.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QEglFSKmsEglDeviceIntegrationPluginTargetsPrecheck.cmake:
-
-/usr/lib/libQt6WaylandClient.so.6:
 
 /usr/lib/cmake/Qt6Gui/Qt6QEglFSX11IntegrationPluginAdditionalTargetInfo.cmake:
 
@@ -6220,6 +6223,8 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 
 /usr/include/qt6/QtWidgets/QScrollArea:
 
+/usr/include/qt6/QtWidgets/QScrollBar:
+
 /usr/lib/cmake/Qt6Gui/Qt6QVncIntegrationPluginTargets.cmake:
 
 /usr/include/qt6/QtWidgets/qabstractscrollarea.h:
@@ -6233,6 +6238,10 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 /usr/include/qt6/QtWidgets/qlayoutitem.h:
 
 /usr/include/qt6/QtWidgets/qscrollarea.h:
+
+/usr/include/c++/15.2.1/backward/auto_ptr.h:
+
+/usr/include/qt6/QtWidgets/qscrollbar.h:
 
 /usr/include/wctype.h:
 

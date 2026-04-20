@@ -1,6 +1,7 @@
 :root {
     --panel-bg: #0f1319;
     --panel-border: #2a3240;
+    --list-bg: #101722;
     --header-bg: #182233;
     --header-color: #f2f6ff;
     --footer-bg: #182233;
@@ -29,4 +30,8 @@
 
     --icon-bg: #1f2430;
     --handle-bg: #2c3f60;
+
+    --scrollbar-track-bg: #192233;
+    --scrollbar-thumb-bg: #314966;
+    --scrollbar-thumb-hover-bg: #40628b;
 }
