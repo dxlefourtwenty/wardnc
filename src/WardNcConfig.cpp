@@ -953,6 +953,7 @@ ConfigLoadResult loadWardNcConfig(const QString &path)
     result.config.panel.maxTrackedNotifications = qMax(1, result.config.panel.maxTrackedNotifications);
     const QString scrollbarPosition = result.config.panel.scrollbarPosition.trimmed().toLower();
     if (scrollbarPosition != QStringLiteral("auto") && scrollbarPosition != QStringLiteral("left") &&
+        scrollbarPosition != QStringLiteral("none") &&
         scrollbarPosition != QStringLiteral("right")) {
         result.config.panel.scrollbarPosition = QStringLiteral("auto");
     }

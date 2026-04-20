@@ -179,6 +179,7 @@ private:
     QPoint closedPosition(const QRect &availableGeometry, int panelHeight) const;
     bool anchorAtRight() const;
     bool panelOnRightSide() const;
+    bool scrollbarHidden() const;
     bool scrollbarOnLeft() const;
     bool anchorAtTop() const;
     bool layerShellUsesRightAnchor() const;

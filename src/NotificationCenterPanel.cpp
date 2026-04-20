@@ -1272,6 +1272,9 @@ bool NotificationCenterPanel::panelOnRightSide() const
 bool NotificationCenterPanel::scrollbarOnLeft() const
 {
     const QString position = config_.panel.scrollbarPosition.trimmed().toLower();
+    if (position == QStringLiteral("none")) {
+        return false;
+    }
     if (position == QStringLiteral("left")) {
         return true;
     }
@@ -1280,6 +1283,11 @@ bool NotificationCenterPanel::scrollbarOnLeft() const
     }
 
     return !panelOnRightSide();
+}
+
+bool NotificationCenterPanel::scrollbarHidden() const
+{
+    return config_.panel.scrollbarPosition.trimmed().compare(QStringLiteral("none"), Qt::CaseInsensitive) == 0;
 }
 
 bool NotificationCenterPanel::anchorAtTop() const
@@ -1425,6 +1433,15 @@ void NotificationCenterPanel::applyScrollbarPlacement()
         return;
     }
 
+    if (scrollbarHidden()) {
+        scrollArea_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        scrollArea_->setLayoutDirection(Qt::LeftToRight);
+        scrollArea_->viewport()->setLayoutDirection(Qt::LeftToRight);
+        listContainer_->setLayoutDirection(Qt::LeftToRight);
+        return;
+    }
+
+    scrollArea_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     const bool onLeft = scrollbarOnLeft();
     scrollArea_->setLayoutDirection(onLeft ? Qt::RightToLeft : Qt::LeftToRight);
     scrollArea_->viewport()->setLayoutDirection(Qt::LeftToRight);
