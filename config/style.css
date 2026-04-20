@@ -27,9 +27,9 @@
     --card-padding-y: 14px;
     --card-gap: 12px;
 
-    --icon-size: 40px;
+    --icon-size: 64px;
     --icon-radius: 10px;
-    --icon-padding: 6px;
+    --icon-padding: 0px;
 
     --text-gap: 6px;
     --summary-size: 14px;
@@ -118,4 +118,22 @@ QScrollBar#notificationListScrollBar::sub-line:vertical {
 QScrollBar#notificationListScrollBar::add-page:vertical,
 QScrollBar#notificationListScrollBar::sub-page:vertical {
     background: transparent;
+}
+
+QPushButton#dismissButton {
+    color: var(--dismiss-color);
+    background: transparent;
+    border: none;
+    border-radius: calc(var(--dismiss-button-size) / 2);
+    font-size: var(--dismiss-size);
+    font-weight: 700;
+    padding: 0px;
+}
+
+QPushButton#dismissButton:hover {
+    background: var(--dismiss-hover-bg);
+}
+
+QPushButton#dismissButton:pressed {
+    background: var(--dismiss-hover-bg);
 }

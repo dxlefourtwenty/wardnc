@@ -54,6 +54,7 @@ QString defaultConfigContents()
         "[layout]\n"
         "anchor = \"top-right\"\n"
         "screen = \"HDMI-A-1\"\n"
+        "monitor_position = \"auto\"\n"
         "width = 420\n"
         "peek_width = 0\n"
         "outer_margin = 0\n"
@@ -82,6 +83,7 @@ QString defaultConfigContents()
         "max_visible_notifications = 120\n"
         "max_tracked_notifications = 400\n"
         "show_handle = true\n"
+        "scrollbar_position = \"auto\"\n"
         "title = \"Notifications\"\n"
         "footer_text = \"wardnc\"\n"
         "\n"
@@ -91,6 +93,7 @@ QString defaultConfigContents()
         "fade = true\n"
         "fade_duration_ms = 180\n"
         "slide_distance = 24\n"
+        "slide_direction = \"auto\"\n"
         "easing = \"out-cubic\"\n"
         "\n"
         "[notifications]\n"
@@ -566,6 +569,13 @@ bool applyLayoutEntry(const QString &key, const QString &value, WardNcConfig *co
     if (key == QStringLiteral("screen")) {
         return parseSectionString(value, &config->layout.screen, QStringLiteral("layout.screen"), error);
     }
+    if (key == QStringLiteral("monitor_position") || key == QStringLiteral("monitor_side") ||
+        key == QStringLiteral("position_on_monitor")) {
+        return parseSectionString(value,
+                                  &config->layout.monitorPosition,
+                                  QStringLiteral("layout.monitor_position"),
+                                  error);
+    }
     if (key == QStringLiteral("width")) {
         return parseSectionInt(value, &config->layout.width, QStringLiteral("layout.width"), error);
     }
@@ -668,6 +678,12 @@ bool applyPanelEntry(const QString &key, const QString &value, WardNcConfig *con
     if (key == QStringLiteral("show_handle")) {
         return parseSectionBool(value, &config->panel.showHandle, QStringLiteral("panel.show_handle"), error);
     }
+    if (key == QStringLiteral("scrollbar_position") || key == QStringLiteral("scrollbar_side")) {
+        return parseSectionString(value,
+                                  &config->panel.scrollbarPosition,
+                                  QStringLiteral("panel.scrollbar_position"),
+                                  error);
+    }
     if (key == QStringLiteral("title")) {
         return parseSectionString(value, &config->panel.title, QStringLiteral("panel.title"), error);
     }
@@ -700,6 +716,12 @@ bool applyAnimationEntry(const QString &key, const QString &value, WardNcConfig 
                                &config->animation.slideDistance,
                                QStringLiteral("animation.slide_distance"),
                                error);
+    }
+    if (key == QStringLiteral("slide_direction")) {
+        return parseSectionString(value,
+                                  &config->animation.slideDirection,
+                                  QStringLiteral("animation.slide_direction"),
+                                  error);
     }
     if (key == QStringLiteral("easing")) {
         return parseSectionString(value, &config->animation.easing, QStringLiteral("animation.easing"), error);
@@ -929,10 +951,25 @@ ConfigLoadResult loadWardNcConfig(const QString &path)
 
     result.config.panel.maxVisibleNotifications = qMax(1, result.config.panel.maxVisibleNotifications);
     result.config.panel.maxTrackedNotifications = qMax(1, result.config.panel.maxTrackedNotifications);
+    const QString scrollbarPosition = result.config.panel.scrollbarPosition.trimmed().toLower();
+    if (scrollbarPosition != QStringLiteral("auto") && scrollbarPosition != QStringLiteral("left") &&
+        scrollbarPosition != QStringLiteral("right")) {
+        result.config.panel.scrollbarPosition = QStringLiteral("auto");
+    }
 
     result.config.animation.durationMs = qMax(result.config.animation.durationMs, 0);
     result.config.animation.fadeDurationMs = qMax(result.config.animation.fadeDurationMs, 0);
     result.config.animation.slideDistance = qMax(result.config.animation.slideDistance, 0);
+    const QString monitorPosition = result.config.layout.monitorPosition.trimmed().toLower();
+    if (monitorPosition != QStringLiteral("auto") && monitorPosition != QStringLiteral("left") &&
+        monitorPosition != QStringLiteral("right")) {
+        result.config.layout.monitorPosition = QStringLiteral("auto");
+    }
+    const QString slideDirection = result.config.animation.slideDirection.trimmed().toLower();
+    if (slideDirection != QStringLiteral("auto") && slideDirection != QStringLiteral("left") &&
+        slideDirection != QStringLiteral("right")) {
+        result.config.animation.slideDirection = QStringLiteral("auto");
+    }
 
     result.config.notifications.defaultTimeoutMs = qMax(result.config.notifications.defaultTimeoutMs, 0);
     result.config.notifications.maxIconSize = qBound(0, result.config.notifications.maxIconSize, 128);

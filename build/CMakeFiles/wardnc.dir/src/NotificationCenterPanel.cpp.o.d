@@ -431,8 +431,10 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: \
  /usr/include/qt6/QtWidgets/QLabel /usr/include/qt6/QtWidgets/qlabel.h \
  /usr/include/qt6/QtWidgets/qframe.h /usr/include/qt6/QtGui/qpicture.h \
  /usr/include/qt6/QtGui/qtextdocument.h \
- /usr/include/qt6/QtWidgets/QLayoutItem /usr/include/qt6/QtGui/QPixmap \
- /usr/include/qt6/QtCore/QProcessEnvironment \
+ /usr/include/qt6/QtWidgets/QLayoutItem /usr/include/qt6/QtGui/QPainter \
+ /usr/include/qt6/QtGui/qpainter.h /usr/include/qt6/QtGui/qtextoption.h \
+ /usr/include/qt6/QtGui/qpen.h /usr/include/qt6/QtGui/QPixmap \
+ /usr/include/qt6/QtGui/QPen /usr/include/qt6/QtCore/QProcessEnvironment \
  /usr/include/qt6/QtCore/qprocess.h \
  /usr/include/qt6/QtCore/QPropertyAnimation \
  /usr/include/qt6/QtCore/qpropertyanimation.h \

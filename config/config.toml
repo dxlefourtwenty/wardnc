@@ -4,6 +4,7 @@
 [layout]
 anchor = "top-right"
 screen = "HDMI-A-1"
+monitor_position = "left"
 width = 420
 peek_width = 0
 outer_margin = 0
@@ -32,6 +33,7 @@ reverse_order = true
 max_visible_notifications = 120
 max_tracked_notifications = 400
 show_handle = true
+scrollbar_position = "auto"
 title = "Notifications"
 footer_text = "wardnc"
 
@@ -41,6 +43,7 @@ duration_ms = 220
 fade = true
 fade_duration_ms = 180
 slide_distance = 24
+slide_direction = "left"
 easing = "out-cubic"
 
 [notifications]
@@ -57,7 +60,7 @@ ignore_transient = false
 auto_expire = false
 respect_timeout = true
 default_timeout_ms = 5000
-max_icon_size = 48
+max_icon_size = 64
 history_enabled = true
 history_max_entries = 2000
 

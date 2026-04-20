@@ -18,7 +18,9 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLayoutItem>
+#include <QPainter>
 #include <QPixmap>
+#include <QPen>
 #include <QProcessEnvironment>
 #include <QPropertyAnimation>
 #include <QPushButton>
@@ -45,6 +47,7 @@
 namespace {
 
 constexpr int kMaxIconSize = 128;
+constexpr int kNormalizedIconSize = 64;
 
 QEasingCurve::Type easingFromName(const QString &name)
 {
@@ -132,6 +135,40 @@ bool parseStyleLength(const QString &value, int *parsed)
 
     *parsed = parsedValue;
     return true;
+}
+
+QColor styleColorValue(const QHash<QString, QString> &styleVariables,
+                       const QString &name,
+                       const QColor &fallback)
+{
+    const QString raw = styleVariables.value(name).trimmed();
+    if (raw.isEmpty()) {
+        return fallback;
+    }
+
+    const QColor parsed(raw);
+    return parsed.isValid() ? parsed : fallback;
+}
+
+QIcon dismissGlyphIcon(int buttonSize, const QColor &color)
+{
+    const int size = qMax(12, buttonSize);
+    QPixmap pixmap(size, size);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    QPen pen(color);
+    pen.setWidthF(qMax(1.6, size * 0.11));
+    pen.setCapStyle(Qt::RoundCap);
+    painter.setPen(pen);
+
+    const qreal inset = size * 0.32;
+    painter.drawLine(QPointF(inset, inset), QPointF(size - inset, size - inset));
+    painter.drawLine(QPointF(size - inset, inset), QPointF(inset, size - inset));
+
+    return QIcon(pixmap);
 }
 
 bool envFlagEnabled(const char *name, bool fallback = false)
@@ -317,18 +354,18 @@ void NotificationCenterPanel::buildUi()
     countBadgeLabel_->setObjectName(QStringLiteral("countBadge"));
     countBadgeLabel_->setAlignment(Qt::AlignCenter);
 
-    clearButton_ = new QPushButton(headerBar_);
-    clearButton_->setObjectName(QStringLiteral("clearButton"));
-    clearButton_->setText(QStringLiteral("Clear"));
-    clearButton_->setCursor(Qt::PointingHandCursor);
-    connect(clearButton_, &QPushButton::clicked, this, [this]() {
-        clearNotifications(2);
+    closeButton_ = new QPushButton(headerBar_);
+    closeButton_->setObjectName(QStringLiteral("clearButton"));
+    closeButton_->setText(QStringLiteral("Close"));
+    closeButton_->setCursor(Qt::PointingHandCursor);
+    connect(closeButton_, &QPushButton::clicked, this, [this]() {
+        closePanel();
     });
 
     headerLayout_->addWidget(titleLabel_);
     headerLayout_->addWidget(countBadgeLabel_, 0, Qt::AlignVCenter);
     headerLayout_->addStretch(1);
-    headerLayout_->addWidget(clearButton_, 0, Qt::AlignVCenter);
+    headerLayout_->addWidget(closeButton_, 0, Qt::AlignVCenter);
     panelLayout_->addWidget(headerBar_);
 
     scrollArea_ = new QScrollArea(panelRoot_);
@@ -355,9 +392,16 @@ void NotificationCenterPanel::buildUi()
     footerLayout_ = new QHBoxLayout(footerBar_);
     footerLayout_->setContentsMargins(12, 0, 12, 0);
 
-    footerLabel_ = new QLabel(footerBar_);
-    footerLabel_->setObjectName(QStringLiteral("footerLabel"));
-    footerLayout_->addWidget(footerLabel_);
+    clearButton_ = new QPushButton(footerBar_);
+    clearButton_->setObjectName(QStringLiteral("clearButton"));
+    clearButton_->setText(QStringLiteral("Clear"));
+    clearButton_->setCursor(Qt::PointingHandCursor);
+    connect(clearButton_, &QPushButton::clicked, this, [this]() {
+        clearNotifications(2);
+    });
+
+    footerLayout_->addStretch(1);
+    footerLayout_->addWidget(clearButton_, 0, Qt::AlignVCenter);
     footerLayout_->addStretch(1);
     panelLayout_->addWidget(footerBar_);
 
@@ -454,6 +498,7 @@ void NotificationCenterPanel::applyUiState()
     footerBar_->setVisible(config_.panel.showFooter);
     clearButton_->setVisible(config_.panel.clearButton);
     sideHandle_->setVisible(config_.panel.showHandle);
+    applyScrollbarPlacement();
 
     setFocusPolicy(config_.layout.focusable ? Qt::StrongFocus : Qt::NoFocus);
 
@@ -479,8 +524,8 @@ void NotificationCenterPanel::refreshStyleMetrics()
     styleMetrics_.cardPaddingX = styleLength(QStringLiteral("--card-padding-x"), 14);
     styleMetrics_.cardPaddingY = styleLength(QStringLiteral("--card-padding-y"), 14);
     styleMetrics_.cardGap = styleLength(QStringLiteral("--card-gap"), 12);
-    styleMetrics_.iconSize = styleLength(QStringLiteral("--icon-size"), 40);
-    styleMetrics_.iconPadding = styleLength(QStringLiteral("--icon-padding"), 6);
+    styleMetrics_.iconSize = kNormalizedIconSize;
+    styleMetrics_.iconPadding = 0;
     styleMetrics_.textGap = styleLength(QStringLiteral("--text-gap"), 6);
     styleMetrics_.bodyMaxLines = styleLength(QStringLiteral("--body-max-lines"), 0);
     styleMetrics_.dismissButtonSize = styleLength(QStringLiteral("--dismiss-button-size"), 20);
@@ -515,6 +560,12 @@ void NotificationCenterPanel::applyStyleMetrics()
     countBadgeLabel_->setMinimumWidth(qMax(1, styleMetrics_.badgeMinWidth));
     countBadgeLabel_->setContentsMargins(styleMetrics_.badgePaddingX, 0, styleMetrics_.badgePaddingX, 0);
 
+    if (closeButton_) {
+        closeButton_->setFixedHeight(qMax(1, styleMetrics_.clearHeight));
+        closeButton_->setMinimumWidth(qMax(1, styleMetrics_.clearMinWidth));
+        closeButton_->setContentsMargins(styleMetrics_.clearPaddingX, 0, styleMetrics_.clearPaddingX, 0);
+    }
+
     clearButton_->setFixedHeight(qMax(1, styleMetrics_.clearHeight));
     clearButton_->setMinimumWidth(qMax(1, styleMetrics_.clearMinWidth));
     clearButton_->setContentsMargins(styleMetrics_.clearPaddingX, 0, styleMetrics_.clearPaddingX, 0);
@@ -541,17 +592,12 @@ void NotificationCenterPanel::updateHeader()
     countBadgeLabel_->setText(QString::number(count));
     countBadgeLabel_->setVisible(count > 0);
     clearButton_->setEnabled(count > 0);
+    ensureCloseButtonInteractivity();
 }
 
 void NotificationCenterPanel::updateFooter()
 {
-    const int count = entries_.size();
-    if (count == 0) {
-        footerLabel_->setText(config_.panel.footerText);
-        return;
-    }
-
-    footerLabel_->setText(QStringLiteral("%1 (%2)").arg(config_.panel.footerText).arg(count));
+    clearButton_->setVisible(config_.panel.clearButton);
 }
 
 void NotificationCenterPanel::rebuildList()
@@ -833,14 +879,20 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
     auto *dismissButton = new QPushButton(card);
     dismissButton->setObjectName(QStringLiteral("dismissButton"));
     dismissButton->setFixedSize(styleMetrics_.dismissButtonSize, styleMetrics_.dismissButtonSize);
-    dismissButton->setText(QStringLiteral("×"));
+    dismissButton->setText(QString());
+    const QColor dismissColor = styleColorValue(styleVariables_,
+                                                QStringLiteral("--dismiss-color"),
+                                                QColor(QStringLiteral("#d2d8e4")));
+    const int dismissGlyphSize = qMax(10, styleMetrics_.dismissButtonSize - 4);
+    dismissButton->setIcon(dismissGlyphIcon(dismissGlyphSize, dismissColor));
+    dismissButton->setIconSize(QSize(dismissGlyphSize, dismissGlyphSize));
     dismissButton->setCursor(Qt::PointingHandCursor);
 
     connect(dismissButton, &QPushButton::clicked, this, [this, entry]() {
         removeEntry(entry, 2);
     });
 
-    topRow->addWidget(iconFrame, 0, Qt::AlignTop);
+    topRow->addWidget(iconFrame, 0, Qt::AlignVCenter);
     topRow->addLayout(textColumn, 1);
     topRow->addWidget(dismissButton, 0, Qt::AlignTop);
 
@@ -1182,7 +1234,7 @@ QScreen *NotificationCenterPanel::resolveScreen() const
 
 QPoint NotificationCenterPanel::openPosition(const QRect &availableGeometry, int panelHeight) const
 {
-    const int x = anchorAtRight()
+    const int x = panelOnRightSide()
         ? availableGeometry.right() - config_.layout.marginRight - width() + 1
         : availableGeometry.left() + config_.layout.marginLeft;
 
@@ -1204,6 +1256,32 @@ bool NotificationCenterPanel::anchorAtRight() const
     return config_.layout.anchor.trimmed().toLower().endsWith(QStringLiteral("right"));
 }
 
+bool NotificationCenterPanel::panelOnRightSide() const
+{
+    const QString side = config_.layout.monitorPosition.trimmed().toLower();
+    if (side == QStringLiteral("left")) {
+        return false;
+    }
+    if (side == QStringLiteral("right")) {
+        return true;
+    }
+
+    return anchorAtRight();
+}
+
+bool NotificationCenterPanel::scrollbarOnLeft() const
+{
+    const QString position = config_.panel.scrollbarPosition.trimmed().toLower();
+    if (position == QStringLiteral("left")) {
+        return true;
+    }
+    if (position == QStringLiteral("right")) {
+        return false;
+    }
+
+    return !panelOnRightSide();
+}
+
 bool NotificationCenterPanel::anchorAtTop() const
 {
     return config_.layout.anchor.trimmed().toLower().startsWith(QStringLiteral("top"));
@@ -1211,7 +1289,20 @@ bool NotificationCenterPanel::anchorAtTop() const
 
 bool NotificationCenterPanel::layerShellUsesRightAnchor() const
 {
-    return anchorAtRight();
+    return panelOnRightSide();
+}
+
+bool NotificationCenterPanel::slideTowardRight() const
+{
+    const QString direction = config_.animation.slideDirection.trimmed().toLower();
+    if (direction == QStringLiteral("left")) {
+        return false;
+    }
+    if (direction == QStringLiteral("right")) {
+        return true;
+    }
+
+    return panelOnRightSide();
 }
 
 bool NotificationCenterPanel::usesLayerShellPlacement() const
@@ -1241,7 +1332,7 @@ int NotificationCenterPanel::closedPanelOffset() const
     const int hiddenDistance = qMax(
         0,
         width() + qMax(0, config_.animation.slideDistance));
-    return anchorAtRight() ? hiddenDistance : -hiddenDistance;
+    return slideTowardRight() ? hiddenDistance : -hiddenDistance;
 }
 
 int NotificationCenterPanel::panelOffsetForState(bool open) const
@@ -1328,6 +1419,33 @@ void NotificationCenterPanel::updateInputMask()
     setMask(QRegion(visibleRect));
 }
 
+void NotificationCenterPanel::applyScrollbarPlacement()
+{
+    if (!scrollArea_ || !listContainer_) {
+        return;
+    }
+
+    const bool onLeft = scrollbarOnLeft();
+    scrollArea_->setLayoutDirection(onLeft ? Qt::RightToLeft : Qt::LeftToRight);
+    scrollArea_->viewport()->setLayoutDirection(Qt::LeftToRight);
+    listContainer_->setLayoutDirection(Qt::LeftToRight);
+}
+
+void NotificationCenterPanel::positionSideHandle()
+{
+    if (!sideHandle_) {
+        return;
+    }
+
+    const int handleWidth = sideHandle_->width();
+    const int handleHeight = sideHandle_->height();
+    const int handleX = panelOnRightSide()
+        ? 0
+        : qMax(0, width() - handleWidth);
+    sideHandle_->move(handleX, qMax(0, (height() - handleHeight) / 2));
+    sideHandle_->setFixedWidth(handleWidth);
+}
+
 void NotificationCenterPanel::refreshWindowPlacement(bool animated)
 {
     constexpr int kMonitorBottomInsetPx = 80;
@@ -1386,10 +1504,7 @@ void NotificationCenterPanel::refreshWindowPlacement(bool animated)
             applyLayerShellPlacement(layerShellPosition_, placementGeometry);
         }
 
-        const int handleWidth = sideHandle_->width();
-        const int handleHeight = sideHandle_->height();
-        sideHandle_->move(0, qMax(0, (height() - handleHeight) / 2));
-        sideHandle_->setFixedWidth(handleWidth);
+        positionSideHandle();
         useCursorScreenForNextPlacement_ = false;
         return;
     }
@@ -1404,10 +1519,7 @@ void NotificationCenterPanel::refreshWindowPlacement(bool animated)
         move(target);
     }
 
-    const int handleWidth = sideHandle_->width();
-    const int handleHeight = sideHandle_->height();
-    sideHandle_->move(0, qMax(0, (height() - handleHeight) / 2));
-    sideHandle_->setFixedWidth(handleWidth);
+    positionSideHandle();
     useCursorScreenForNextPlacement_ = false;
 }
 
@@ -1415,7 +1527,8 @@ void NotificationCenterPanel::setPanelOpen(bool open, bool animated, bool writeS
 {
     const bool stateChanged = (open_ != open);
     if (!open_ && open) {
-        useCursorScreenForNextPlacement_ = true;
+        useCursorScreenForNextPlacement_ =
+            config_.layout.screen.trimmed().compare(QStringLiteral("cursor"), Qt::CaseInsensitive) == 0;
     }
 
     open_ = open;
@@ -1423,6 +1536,8 @@ void NotificationCenterPanel::setPanelOpen(bool open, bool animated, bool writeS
     if (open_ && !isVisible()) {
         show();
     }
+
+    ensureCloseButtonInteractivity();
 
     refreshWindowPlacement(animated);
     applyPanelVisibility(animated);
@@ -1439,6 +1554,19 @@ void NotificationCenterPanel::setPanelOpen(bool open, bool animated, bool writeS
 
     if (writeState) {
         writeStateFile(open_ ? QStringLiteral("open") : QStringLiteral("closed"));
+    }
+}
+
+void NotificationCenterPanel::ensureCloseButtonInteractivity()
+{
+    if (!closeButton_) {
+        return;
+    }
+
+    closeButton_->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+    closeButton_->setEnabled(open_);
+    if (open_) {
+        closeButton_->raise();
     }
 }
 
@@ -2136,7 +2264,7 @@ void NotificationCenterPanel::resizeEvent(QResizeEvent *event)
 
     const int handleHeight = qMax(40, qMin(96, height() / 4));
     sideHandle_->setFixedHeight(handleHeight);
-    sideHandle_->move(0, qMax(0, (height() - handleHeight) / 2));
+    positionSideHandle();
 }
 
 void NotificationCenterPanel::keyPressEvent(QKeyEvent *event)

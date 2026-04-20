@@ -8,6 +8,7 @@
 struct WardNcLayoutConfig {
     QString anchor = QStringLiteral("top-right");
     QString screen = QStringLiteral("HDMI-A-1");
+    QString monitorPosition = QStringLiteral("auto");
     int width = 420;
     int peekWidth = 0;
     int outerMargin = 0;
@@ -37,6 +38,7 @@ struct WardNcPanelConfig {
     int maxVisibleNotifications = 120;
     int maxTrackedNotifications = 400;
     bool showHandle = true;
+    QString scrollbarPosition = QStringLiteral("auto");
     QString title = QStringLiteral("Notifications");
     QString footerText = QStringLiteral("wardnc");
 };
@@ -47,6 +49,7 @@ struct WardNcAnimationConfig {
     bool fade = true;
     int fadeDurationMs = 180;
     int slideDistance = 24;
+    QString slideDirection = QStringLiteral("auto");
     QString easing = QStringLiteral("out-cubic");
 };
 

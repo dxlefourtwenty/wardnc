@@ -1436,6 +1436,8 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtGui/QIcon \
   /usr/include/qt6/QtGui/QImage \
   /usr/include/qt6/QtGui/QKeyEvent \
+  /usr/include/qt6/QtGui/QPainter \
+  /usr/include/qt6/QtGui/QPen \
   /usr/include/qt6/QtGui/QPixmap \
   /usr/include/qt6/QtGui/QRegion \
   /usr/include/qt6/QtGui/QScreen \
@@ -1460,7 +1462,9 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtGui/qinputmethod.h \
   /usr/include/qt6/QtGui/qkeysequence.h \
   /usr/include/qt6/QtGui/qpaintdevice.h \
+  /usr/include/qt6/QtGui/qpainter.h \
   /usr/include/qt6/QtGui/qpalette.h \
+  /usr/include/qt6/QtGui/qpen.h \
   /usr/include/qt6/QtGui/qpicture.h \
   /usr/include/qt6/QtGui/qpixelformat.h \
   /usr/include/qt6/QtGui/qpixmap.h \
@@ -1474,6 +1478,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtGui/qsurface.h \
   /usr/include/qt6/QtGui/qsurfaceformat.h \
   /usr/include/qt6/QtGui/qtextdocument.h \
+  /usr/include/qt6/QtGui/qtextoption.h \
   /usr/include/qt6/QtGui/qtgui-config.h \
   /usr/include/qt6/QtGui/qtguiexports.h \
   /usr/include/qt6/QtGui/qtguiglobal.h \
@@ -4057,6 +4062,10 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o:
 
 /usr/lib/libQt6WaylandClient.so.6:
 
+/usr/lib/libQt6DBus.so.6.11.0:
+
+/usr/lib/libLayerShellQtInterface.so.6.6.4:
+
 /usr/lib/cmake/Qt6/QtPublicTargetHelpers.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicSbomPythonHelpers.cmake:
@@ -4218,8 +4227,6 @@ wardnc_autogen/moc_predefs.h:
 /usr/include/qt6/QtCore/qstring.h:
 
 /usr/include/c++/15.2.1/bits/exception_ptr.h:
-
-/usr/lib/libLayerShellQtInterface.so.6.6.4:
 
 /usr/include/qt6/QtCore/qsize.h:
 
@@ -4541,8 +4548,6 @@ wardnc_autogen/moc_predefs.h:
 
 /usr/include/c++/15.2.1/bits/atomic_lockfree_defines.h:
 
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/error_constants.h:
-
 /usr/include/c++/15.2.1/bits/invoke.h:
 
 /usr/include/qt6/QtCore/qanystringview.h:
@@ -4818,6 +4823,10 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 /usr/include/bits/wordsize.h:
 
 /usr/include/bits/posix1_lim.h:
+
+/usr/lib/libQt6Core.so.6.11.0:
+
+/usr/lib/libEGL.so.1:
 
 /usr/include/bits/stdio_lim.h:
 
@@ -5153,9 +5162,9 @@ wardnc_autogen/mocs_compilation.cpp:
 
 /usr/lib/cmake/Qt6Gui/Qt6QXcbGlxIntegrationPluginTargets-relwithdebinfo.cmake:
 
-/usr/include/c++/15.2.1/tr1/ell_integral.tcc:
-
 /usr/lib/libOpenGL.so:
+
+/usr/include/c++/15.2.1/tr1/ell_integral.tcc:
 
 /usr/include/c++/15.2.1/bits/uniform_int_dist.h:
 
@@ -5232,8 +5241,6 @@ wardnc_autogen/mocs_compilation.cpp:
 /usr/include/c++/15.2.1/cstddef:
 
 /usr/lib/cmake/Qt6Gui/Qt6QEglFSEmulatorIntegrationPluginTargets.cmake:
-
-/usr/lib/libQt6DBus.so.6.11.0:
 
 /usr/include/qt6/QtWidgets/qsizepolicy.h:
 
@@ -5556,6 +5563,10 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o:
 /home/dxle/builds/wardnc/CMakeLists.txt:
 
 /usr/lib/cmake/Qt6Gui/Qt6QPdfPluginAdditionalTargetInfo.cmake:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/error_constants.h:
+
+/usr/include/qt6/QtGui/qpen.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QEvdevTouchScreenPluginTargets.cmake:
 
@@ -6203,6 +6214,10 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 
 /usr/include/qt6/QtGui/QKeyEvent:
 
+/usr/include/qt6/QtGui/QPainter:
+
+/usr/include/qt6/QtGui/QPen:
+
 /usr/share/cmake/Modules/Internal/CheckFlagCommonConfig.cmake:
 
 /usr/include/qt6/QtGui/QPixmap:
@@ -6217,7 +6232,13 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 
 /usr/include/qt6/QtGui/qinputmethod.h:
 
+/usr/include/qt6/QtGui/qpainter.h:
+
+wardnc_autogen/UVLADIE3JM/moc_NotificationCenterPanel.cpp:
+
 /usr/include/qt6/QtGui/qscreen.h:
+
+/usr/include/qt6/QtGui/qtextoption.h:
 
 /usr/include/qt6/QtWidgets/QBoxLayout:
 
@@ -6277,8 +6298,6 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 
 /usr/include/qt6/QtWidgets/qapplication.h:
 
-wardnc_autogen/UVLADIE3JM/moc_NotificationCenterPanel.cpp:
-
 /usr/include/c++/15.2.1/bits/refwrap.h:
 
 /usr/include/c++/15.2.1/bits/stl_iterator.h:
@@ -6312,7 +6331,3 @@ wardnc_autogen/UVLADIE3JM/moc_WardNcControl.cpp:
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o:
 
 /usr/lib/ld-linux-x86-64.so.2:
-
-/usr/lib/libEGL.so.1:
-
-/usr/lib/libQt6Core.so.6.11.0:

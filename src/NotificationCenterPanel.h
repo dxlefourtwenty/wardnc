@@ -129,6 +129,7 @@ private:
     void buildUi();
     void applyUiState();
     void applyStyleMetrics();
+    void ensureCloseButtonInteractivity();
     void updateHeader();
     void updateFooter();
     void rebuildList();
@@ -177,8 +178,11 @@ private:
     QPoint openPosition(const QRect &availableGeometry, int panelHeight) const;
     QPoint closedPosition(const QRect &availableGeometry, int panelHeight) const;
     bool anchorAtRight() const;
+    bool panelOnRightSide() const;
+    bool scrollbarOnLeft() const;
     bool anchorAtTop() const;
     bool layerShellUsesRightAnchor() const;
+    bool slideTowardRight() const;
     bool usesLayerShellPlacement() const;
     QRect layerShellPlacementGeometry(QScreen *screen) const;
     int closedPanelOffset() const;
@@ -187,6 +191,8 @@ private:
     void animatePanelOffsetTo(int offset);
     void updatePanelRootGeometry();
     void updateInputMask();
+    void applyScrollbarPlacement();
+    void positionSideHandle();
     void refreshWindowPlacement(bool animated);
     void setPanelOpen(bool open, bool animated, bool writeState);
     void applyPanelVisibility(bool animated);
@@ -219,13 +225,13 @@ private:
     QHBoxLayout *headerLayout_ = nullptr;
     QLabel *titleLabel_ = nullptr;
     QLabel *countBadgeLabel_ = nullptr;
+    QPushButton *closeButton_ = nullptr;
     QPushButton *clearButton_ = nullptr;
     QScrollArea *scrollArea_ = nullptr;
     QWidget *listContainer_ = nullptr;
     QVBoxLayout *listLayout_ = nullptr;
     QFrame *footerBar_ = nullptr;
     QHBoxLayout *footerLayout_ = nullptr;
-    QLabel *footerLabel_ = nullptr;
     QFrame *sideHandle_ = nullptr;
 
     QList<NotificationEntry *> entries_;
