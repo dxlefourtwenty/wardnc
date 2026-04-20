@@ -1,6 +1,8 @@
 @import "./colors.css";
 
 :root {
+    --font-family: "Liberation Sans";
+
     --panel-radius: 20px;
     --panel-border-width: 1px;
     --panel-padding-x: 12px;
@@ -53,11 +55,15 @@
     --footer-padding-x: 12px;
     --footer-size: 12px;
 
-    --clear-height: 26px;
+    --clear-height: 22px;
     --clear-radius: 8px;
     --clear-size: 12px;
-    --clear-min-width: 86px;
-    --clear-padding-x: 16px;
+    --clear-min-width: 56px;
+    --clear-padding-x: 4px;
+    --clear-shadow-blur: 10px;
+    --clear-shadow-offset-x: 0px;
+    --clear-shadow-offset-y: 2px;
+    --clear-shadow-margin-y: 4px;
 
     --scrollbar-width: 8px;
     --scrollbar-track-radius: 4px;
@@ -68,6 +74,11 @@
 
 QWidget#notificationCenterWindow {
     background: transparent;
+}
+
+QWidget#notificationCenterWindow,
+QWidget#notificationCenterWindow * {
+    font-family: var(--font-family);
 }
 
 QFrame#panelRoot {
@@ -120,6 +131,82 @@ QScrollBar#notificationListScrollBar::sub-page:vertical {
     background: transparent;
 }
 
+QFrame#headerBar {
+    background: var(--header-bg);
+    border-radius: var(--header-radius);
+}
+
+QLabel#headerTitle {
+    color: var(--header-color);
+    font-size: var(--header-size);
+    font-weight: 700;
+}
+
+QLabel#countBadge {
+    color: var(--badge-color);
+    background: var(--badge-bg);
+    border-radius: var(--badge-radius);
+    font-size: var(--badge-size);
+    font-weight: 700;
+}
+
+QPushButton#clearButton {
+    color: var(--clear-color);
+    background: var(--clear-bg);
+    border: none;
+    border-radius: var(--clear-radius);
+    font-size: var(--clear-size);
+    font-weight: 700;
+    padding: 0px var(--clear-padding-x);
+}
+
+QPushButton#clearButton:hover {
+    background: var(--clear-hover-bg);
+}
+
+QPushButton#clearButton:pressed {
+    background: var(--clear-hover-bg);
+}
+
+QFrame#notificationCard {
+    background: var(--card-bg);
+    border: var(--card-border-width) solid var(--card-border);
+    border-radius: var(--card-radius);
+}
+
+QLabel#summaryLabel {
+    color: var(--summary-color);
+    font-size: var(--summary-size);
+    font-weight: 700;
+}
+
+QLabel#bodyLabel {
+    color: var(--body-color);
+    font-size: var(--body-size);
+}
+
+QLabel#appNameLabel {
+    color: var(--app-name-color);
+    font-size: var(--app-name-size);
+}
+
+QLabel#timestampLabel {
+    color: var(--timestamp-color);
+    font-size: var(--timestamp-size);
+    font-weight: 600;
+}
+
+QLabel#timestampDayLabel {
+    color: var(--timestamp-color);
+    font-size: var(--timestamp-size);
+    font-weight: 600;
+}
+
+QFrame#iconFrame {
+    background: var(--icon-bg);
+    border-radius: var(--icon-radius);
+}
+
 QPushButton#dismissButton {
     color: var(--dismiss-color);
     background: transparent;
@@ -136,4 +223,36 @@ QPushButton#dismissButton:hover {
 
 QPushButton#dismissButton:pressed {
     background: var(--dismiss-hover-bg);
+}
+
+QPushButton#actionButton {
+    color: var(--action-color);
+    background: var(--action-bg);
+    border: none;
+    border-radius: var(--action-radius);
+    font-size: var(--action-size);
+}
+
+QPushButton#actionButton:hover {
+    background: var(--action-hover-bg);
+}
+
+QPushButton#actionButton:pressed {
+    background: var(--action-hover-bg);
+}
+
+QFrame#footerBar {
+    background: var(--footer-bg);
+    border-radius: var(--footer-radius);
+}
+
+QLabel#footerLabel {
+    color: var(--footer-color);
+    font-size: var(--footer-size);
+}
+
+QFrame#sideHandle {
+    background: var(--handle-bg);
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
 }

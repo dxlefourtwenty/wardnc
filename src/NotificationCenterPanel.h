@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QColor>
 #include <QDateTime>
 #include <QEasingCurve>
 #include <QFileSystemWatcher>
@@ -51,6 +52,7 @@ struct NotificationEntry {
     QLabel *summaryLabel = nullptr;
     QLabel *bodyLabel = nullptr;
     QLabel *appLabel = nullptr;
+    QLabel *timestampDayLabel = nullptr;
     QLabel *timestampLabel = nullptr;
     QLabel *iconLabel = nullptr;
     QTimer *expiryTimer = nullptr;
@@ -121,14 +123,19 @@ private:
         int actionHorizontalPadding = 22;
         int footerHeight = 34;
         int footerPaddingX = 12;
-        int clearHeight = 26;
-        int clearMinWidth = 86;
-        int clearPaddingX = 16;
+        int clearHeight = 22;
+        int clearMinWidth = 56;
+        int clearPaddingX = 4;
+        int clearShadowBlur = 10;
+        int clearShadowOffsetX = 0;
+        int clearShadowOffsetY = 2;
+        int clearShadowMarginY = 4;
     };
 
     void buildUi();
     void applyUiState();
     void applyStyleMetrics();
+    void applyClearButtonShadows();
     void ensureCloseButtonInteractivity();
     void updateHeader();
     void updateFooter();
@@ -165,6 +172,7 @@ private:
     QString decodeEntities(const QString &text) const;
     QString normalizedSummary(const QString &summary, const QString &body) const;
     QString displayAppName(const QString &appName) const;
+    QString timestampDayText(const QDateTime &timestamp) const;
     QString timestampText(const QDateTime &timestamp) const;
 
     QPixmap notificationPixmap(const NotificationEntry *entry) const;
@@ -219,6 +227,7 @@ private:
     QString styleSheet_;
     QHash<QString, QString> styleVariables_;
     StyleMetrics styleMetrics_;
+    QColor clearButtonShadowColor_ {0, 0, 0, 0};
 
     QFrame *panelRoot_ = nullptr;
     QVBoxLayout *panelLayout_ = nullptr;

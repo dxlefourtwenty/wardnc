@@ -9,6 +9,7 @@
 #include <QFileInfo>
 #include <QCursor>
 #include <QGuiApplication>
+#include <QGraphicsDropShadowEffect>
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QImage>
@@ -535,9 +536,16 @@ void NotificationCenterPanel::refreshStyleMetrics()
     styleMetrics_.actionHorizontalPadding = styleLength(QStringLiteral("--action-horizontal-padding"), 22);
     styleMetrics_.footerHeight = styleLength(QStringLiteral("--footer-height"), 34);
     styleMetrics_.footerPaddingX = styleLength(QStringLiteral("--footer-padding-x"), 12);
-    styleMetrics_.clearHeight = styleLength(QStringLiteral("--clear-height"), 26);
-    styleMetrics_.clearMinWidth = styleLength(QStringLiteral("--clear-min-width"), 86);
-    styleMetrics_.clearPaddingX = styleLength(QStringLiteral("--clear-padding-x"), 16);
+    styleMetrics_.clearHeight = styleLength(QStringLiteral("--clear-height"), 22);
+    styleMetrics_.clearMinWidth = styleLength(QStringLiteral("--clear-min-width"), 56);
+    styleMetrics_.clearPaddingX = styleLength(QStringLiteral("--clear-padding-x"), 4);
+    styleMetrics_.clearShadowBlur = styleLength(QStringLiteral("--clear-shadow-blur"), 10);
+    styleMetrics_.clearShadowOffsetX = styleLength(QStringLiteral("--clear-shadow-offset-x"), 0);
+    styleMetrics_.clearShadowOffsetY = styleLength(QStringLiteral("--clear-shadow-offset-y"), 2);
+    styleMetrics_.clearShadowMarginY = styleLength(QStringLiteral("--clear-shadow-margin-y"), 4);
+    clearButtonShadowColor_ = styleColorValue(styleVariables_,
+                                              QStringLiteral("--clear-shadow-color"),
+                                              QColor(0, 0, 0, 0));
 }
 
 void NotificationCenterPanel::applyStyleMetrics()
@@ -553,7 +561,11 @@ void NotificationCenterPanel::applyStyleMetrics()
     panelLayout_->setSpacing(styleMetrics_.panelSectionGap);
 
     headerBar_->setFixedHeight(qMax(1, styleMetrics_.headerHeight));
-    headerLayout_->setContentsMargins(styleMetrics_.headerPaddingX, 0, styleMetrics_.headerPaddingX, 0);
+    const int clearShadowMarginY = qMax(0, styleMetrics_.clearShadowMarginY);
+    headerLayout_->setContentsMargins(styleMetrics_.headerPaddingX,
+                                      clearShadowMarginY,
+                                      styleMetrics_.headerPaddingX,
+                                      clearShadowMarginY);
     headerLayout_->setSpacing(styleMetrics_.headerGap);
 
     countBadgeLabel_->setMinimumHeight(qMax(1, styleMetrics_.badgeHeight));
@@ -569,11 +581,15 @@ void NotificationCenterPanel::applyStyleMetrics()
     clearButton_->setFixedHeight(qMax(1, styleMetrics_.clearHeight));
     clearButton_->setMinimumWidth(qMax(1, styleMetrics_.clearMinWidth));
     clearButton_->setContentsMargins(styleMetrics_.clearPaddingX, 0, styleMetrics_.clearPaddingX, 0);
+    applyClearButtonShadows();
 
     listLayout_->setSpacing(styleMetrics_.notificationGap);
 
     footerBar_->setFixedHeight(qMax(1, styleMetrics_.footerHeight));
-    footerLayout_->setContentsMargins(styleMetrics_.footerPaddingX, 0, styleMetrics_.footerPaddingX, 0);
+    footerLayout_->setContentsMargins(styleMetrics_.footerPaddingX,
+                                      clearShadowMarginY,
+                                      styleMetrics_.footerPaddingX,
+                                      clearShadowMarginY);
 
     const int handleWidth = qMax(6, qMin(16, qMax(config_.layout.peekWidth, 1)));
     const int handleHeight = qMax(40, qMin(96, height() / 4));
@@ -584,6 +600,33 @@ void NotificationCenterPanel::applyStyleMetrics()
     }
 
     rebuildList();
+}
+
+void NotificationCenterPanel::applyClearButtonShadows()
+{
+    const auto applyShadow = [this](QPushButton *button) {
+        if (!button) {
+            return;
+        }
+
+        if (styleMetrics_.clearShadowBlur <= 0 || clearButtonShadowColor_.alpha() <= 0) {
+            button->setGraphicsEffect(nullptr);
+            return;
+        }
+
+        auto *effect = qobject_cast<QGraphicsDropShadowEffect *>(button->graphicsEffect());
+        if (!effect) {
+            effect = new QGraphicsDropShadowEffect(button);
+            button->setGraphicsEffect(effect);
+        }
+
+        effect->setBlurRadius(styleMetrics_.clearShadowBlur);
+        effect->setOffset(styleMetrics_.clearShadowOffsetX, styleMetrics_.clearShadowOffsetY);
+        effect->setColor(clearButtonShadowColor_);
+    };
+
+    applyShadow(closeButton_);
+    applyShadow(clearButton_);
 }
 
 void NotificationCenterPanel::updateHeader()
@@ -868,8 +911,14 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
     timestampLabel->setText(timestampText(entry->createdAt));
     timestampLabel->setVisible(config_.panel.showTimestamp);
 
+    auto *timestampDayLabel = new QLabel(card);
+    timestampDayLabel->setObjectName(QStringLiteral("timestampDayLabel"));
+    timestampDayLabel->setText(timestampDayText(entry->createdAt));
+    timestampDayLabel->setVisible(config_.panel.showTimestamp);
+
     metaRow->addWidget(appLabel);
     metaRow->addStretch(1);
+    metaRow->addWidget(timestampDayLabel);
     metaRow->addWidget(timestampLabel);
 
     textColumn->addWidget(summaryLabel);
@@ -904,6 +953,7 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
     entry->summaryLabel = summaryLabel;
     entry->bodyLabel = bodyLabel;
     entry->appLabel = appLabel;
+    entry->timestampDayLabel = timestampDayLabel;
     entry->timestampLabel = timestampLabel;
     entry->iconLabel = iconLabel;
 }
@@ -1063,10 +1113,6 @@ QString NotificationCenterPanel::normalizedSummary(const QString &summary, const
 QString NotificationCenterPanel::displayAppName(const QString &appName) const
 {
     const QString cleaned = sanitizeText(appName).trimmed();
-    if (cleaned.compare(QStringLiteral("notify-send"), Qt::CaseInsensitive) == 0) {
-        return {};
-    }
-
     return cleaned;
 }
 
@@ -1079,6 +1125,15 @@ QString NotificationCenterPanel::timestampText(const QDateTime &timestamp) const
     return config_.panel.timeFormat24h
         ? timestamp.toString(QStringLiteral("HH:mm"))
         : timestamp.toString(QStringLiteral("h:mm AP"));
+}
+
+QString NotificationCenterPanel::timestampDayText(const QDateTime &timestamp) const
+{
+    if (!timestamp.isValid()) {
+        return {};
+    }
+
+    return timestamp.toString(QStringLiteral("ddd"));
 }
 
 QPixmap NotificationCenterPanel::notificationPixmap(const NotificationEntry *entry) const

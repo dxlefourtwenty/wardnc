@@ -434,6 +434,7 @@ wardnc_autogen/timestamp: /home/dxle/builds/wardnc/CMakeLists.txt \
   /usr/include/qt6/QtCore/qversiontagging.h \
   /usr/include/qt6/QtCore/qxptype_traits.h \
   /usr/include/qt6/QtCore/qyieldcpu.h \
+  /usr/include/qt6/QtGui/QColor \
   /usr/include/qt6/QtGui/qaction.h \
   /usr/include/qt6/QtGui/qbitmap.h \
   /usr/include/qt6/QtGui/qbrush.h \
@@ -2321,11 +2322,11 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 
 /usr/lib/cmake/Qt6/Qt6Targets.cmake:
 
+/usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfig.cmake:
+
 /usr/include/qt6/QtCore/qrefcount.h:
 
 /usr/include/c++/15.2.1/cstdio:
-
-/usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfig.cmake:
 
 /usr/include/qt6/QtCore/qcalendar.h:
 
@@ -2576,6 +2577,8 @@ wardnc_autogen/moc_predefs.h:
 /usr/include/qt6/QtCore/qvarlengtharray.h:
 
 /usr/include/qt6/QtCore/qyieldcpu.h:
+
+/usr/include/qt6/QtGui/QColor:
 
 /usr/include/qt6/QtCore/q20bit.h:
 

@@ -434,6 +434,7 @@ wardnc_autogen/timestamp: /home/dxle/builds/wardnc/CMakeLists.txt \
   /usr/include/qt6/QtCore/qversiontagging.h \
   /usr/include/qt6/QtCore/qxptype_traits.h \
   /usr/include/qt6/QtCore/qyieldcpu.h \
+  /usr/include/qt6/QtGui/QColor \
   /usr/include/qt6/QtGui/qaction.h \
   /usr/include/qt6/QtGui/qbitmap.h \
   /usr/include/qt6/QtGui/qbrush.h \
@@ -1431,6 +1432,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtDBus/qdbusextratypes.h \
   /usr/include/qt6/QtDBus/qtdbusexports.h \
   /usr/include/qt6/QtDBus/qtdbusglobal.h \
+  /usr/include/qt6/QtGui/QColor \
   /usr/include/qt6/QtGui/QCursor \
   /usr/include/qt6/QtGui/QGuiApplication \
   /usr/include/qt6/QtGui/QIcon \
@@ -1488,6 +1490,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtGui/qwindow.h \
   /usr/include/qt6/QtGui/qwindowdefs.h \
   /usr/include/qt6/QtWidgets/QBoxLayout \
+  /usr/include/qt6/QtWidgets/QGraphicsDropShadowEffect \
   /usr/include/qt6/QtWidgets/QHBoxLayout \
   /usr/include/qt6/QtWidgets/QLabel \
   /usr/include/qt6/QtWidgets/QLayoutItem \
@@ -1501,6 +1504,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtWidgets/qabstractslider.h \
   /usr/include/qt6/QtWidgets/qboxlayout.h \
   /usr/include/qt6/QtWidgets/qframe.h \
+  /usr/include/qt6/QtWidgets/qgraphicseffect.h \
   /usr/include/qt6/QtWidgets/qgridlayout.h \
   /usr/include/qt6/QtWidgets/qlabel.h \
   /usr/include/qt6/QtWidgets/qlayout.h \
@@ -3357,6 +3361,7 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/qt6/QtDBus/qdbusreply.h \
   /usr/include/qt6/QtDBus/qtdbusexports.h \
   /usr/include/qt6/QtDBus/qtdbusglobal.h \
+  /usr/include/qt6/QtGui/QColor \
   /usr/include/qt6/QtGui/qaction.h \
   /usr/include/qt6/QtGui/qbitmap.h \
   /usr/include/qt6/QtGui/qbrush.h \
@@ -3860,6 +3865,7 @@ CMakeFiles/wardnc.dir/wardnc_autogen/mocs_compilation.cpp.o: wardnc_autogen/mocs
   /usr/include/qt6/QtCore/qversiontagging.h \
   /usr/include/qt6/QtCore/qxptype_traits.h \
   /usr/include/qt6/QtCore/qyieldcpu.h \
+  /usr/include/qt6/QtGui/QColor \
   /usr/include/qt6/QtGui/qaction.h \
   /usr/include/qt6/QtGui/qbitmap.h \
   /usr/include/qt6/QtGui/qbrush.h \
@@ -4066,6 +4072,12 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o:
 
 /usr/lib/libLayerShellQtInterface.so.6.6.4:
 
+/usr/lib/libGLX.so:
+
+/usr/lib/libQt6Core.so.6.11.0:
+
+/usr/lib/libEGL.so.1:
+
 /usr/lib/cmake/Qt6/QtPublicTargetHelpers.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicSbomPythonHelpers.cmake:
@@ -4151,6 +4163,8 @@ CMakeFiles/wardnc.dir/src/WardNcConfig.cpp.o:
 /usr/include/qt6/QtGui/qtguiglobal.h:
 
 /usr/include/qt6/QtCore/q20bit.h:
+
+/usr/include/qt6/QtGui/QColor:
 
 /usr/include/qt6/QtCore/qyieldcpu.h:
 
@@ -4362,9 +4376,9 @@ wardnc_autogen/moc_predefs.h:
 
 /usr/include/qt6/QtCore/qcalendar.h:
 
-/usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfig.cmake:
-
 /usr/include/qt6/QtCore/qrefcount.h:
+
+/usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfig.cmake:
 
 /usr/lib/cmake/Qt6/Qt6Targets.cmake:
 
@@ -4676,9 +4690,9 @@ wardnc_autogen/moc_predefs.h:
 
 /usr/include/bits/types/clock_t.h:
 
-/usr/include/qt6/QtWidgets/qtwidgetsexports.h:
-
 /usr/lib/libGLdispatch.so.0:
+
+/usr/include/qt6/QtWidgets/qtwidgetsexports.h:
 
 /usr/include/bits/types/__locale_t.h:
 
@@ -4823,10 +4837,6 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 /usr/include/bits/wordsize.h:
 
 /usr/include/bits/posix1_lim.h:
-
-/usr/lib/libQt6Core.so.6.11.0:
-
-/usr/lib/libEGL.so.1:
 
 /usr/include/bits/stdio_lim.h:
 
@@ -5546,8 +5556,6 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o:
 
 /usr/share/cmake/Modules/CheckIncludeFileCXX.cmake:
 
-/usr/lib/libGLX.so:
-
 /usr/lib/cmake/Qt6Gui/Qt6QEvdevMousePluginTargets.cmake:
 
 /usr/include/asm-generic/bitsperlong.h:
@@ -6002,10 +6010,6 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 
 /usr/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake:
 
-/usr/lib/cmake/Qt6Gui/Qt6GuiConfigVersion.cmake:
-
-/usr/include/qt6/QtCore/QEvent:
-
 /usr/share/cmake/Modules/CheckCXXCompilerFlag.cmake:
 
 /usr/lib/libharfbuzz.so.0:
@@ -6242,6 +6246,8 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationCenterPanel.cpp:
 
 /usr/include/qt6/QtWidgets/QBoxLayout:
 
+/usr/include/qt6/QtWidgets/QGraphicsDropShadowEffect:
+
 /usr/include/qt6/QtWidgets/QScrollArea:
 
 /usr/include/qt6/QtWidgets/QScrollBar:
@@ -6249,6 +6255,12 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationCenterPanel.cpp:
 /usr/lib/cmake/Qt6Gui/Qt6QVncIntegrationPluginTargets.cmake:
 
 /usr/include/qt6/QtWidgets/qabstractscrollarea.h:
+
+/usr/lib/cmake/Qt6Gui/Qt6GuiConfigVersion.cmake:
+
+/usr/include/qt6/QtCore/QEvent:
+
+/usr/include/qt6/QtWidgets/qgraphicseffect.h:
 
 /usr/include/qt6/QtWidgets/qgridlayout.h:
 
