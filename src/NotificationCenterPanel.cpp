@@ -51,6 +51,28 @@ namespace {
 
 constexpr int kMaxIconSize = 128;
 constexpr int kNormalizedIconSize = 64;
+constexpr int kMaxStoredNotifications = 200;
+constexpr int kBadgeDisplayLimit = 99;
+constexpr auto kDefaultHeaderGlyph = "󰂚";
+
+QString formatHeaderTitle(const QString &glyph, const QString &title)
+{
+    QString headerGlyph = glyph;
+    if (headerGlyph.isEmpty()) {
+        headerGlyph = QString::fromUtf8(kDefaultHeaderGlyph);
+    }
+    QString headerTitle = title;
+    if (headerTitle.trimmed().isEmpty()) {
+        headerTitle = QStringLiteral("Notifications ");
+    }
+
+    QString escapedTitle = headerTitle.toHtmlEscaped();
+    escapedTitle.replace(QLatin1Char(' '), QStringLiteral("&nbsp;"));
+
+    return QStringLiteral(
+               "<span style=\"font-size:150%; font-family:'Symbols Nerd Font','JetBrainsMono Nerd Font','Noto Sans Symbols2','Noto Sans Symbols'; vertical-align:2px;\">%1</span> %2")
+        .arg(headerGlyph.toHtmlEscaped(), escapedTitle);
+}
 
 QEasingCurve::Type easingFromName(const QString &name)
 {
@@ -448,6 +470,7 @@ void NotificationCenterPanel::buildUi()
 
     titleLabel_ = new QLabel(headerBar_);
     titleLabel_->setObjectName(QStringLiteral("headerTitle"));
+    titleLabel_->setTextFormat(Qt::RichText);
 
     countBadgeLabel_ = new QLabel(headerBar_);
     countBadgeLabel_->setObjectName(QStringLiteral("countBadge"));
@@ -592,7 +615,7 @@ void NotificationCenterPanel::applyStyle(const QString &styleSheet,
 
 void NotificationCenterPanel::applyUiState()
 {
-    titleLabel_->setText(config_.panel.title);
+    titleLabel_->setText(formatHeaderTitle(config_.panel.headerGlpyh, config_.panel.title));
     headerBar_->setVisible(config_.panel.showHeader);
     footerBar_->setVisible(config_.panel.showFooter);
     clearButton_->setVisible(config_.panel.clearButton);
@@ -619,6 +642,7 @@ void NotificationCenterPanel::refreshStyleMetrics()
     styleMetrics_.badgeHeight = styleLength(QStringLiteral("--badge-height"), 22);
     styleMetrics_.badgeMinWidth = styleLength(QStringLiteral("--badge-min-width"), 30);
     styleMetrics_.badgePaddingX = styleLength(QStringLiteral("--badge-padding-x"), 14);
+    styleMetrics_.badgeFontSize = styleLength(QStringLiteral("--badge-size"), 11);
     styleMetrics_.notificationGap = styleLength(QStringLiteral("--notification-gap"), 10);
     styleMetrics_.cardPaddingX = styleLength(QStringLiteral("--card-padding-x"), 14);
     styleMetrics_.cardPaddingY = styleLength(QStringLiteral("--card-padding-y"), 14);
@@ -669,6 +693,8 @@ void NotificationCenterPanel::applyStyleMetrics()
     countBadgeLabel_->setMinimumHeight(qMax(1, styleMetrics_.badgeHeight));
     countBadgeLabel_->setMinimumWidth(qMax(1, styleMetrics_.badgeMinWidth));
     countBadgeLabel_->setContentsMargins(styleMetrics_.badgePaddingX, 0, styleMetrics_.badgePaddingX, 0);
+    const int badgeFontSize = qMax(1, (styleMetrics_.badgeFontSize * 13 + 5) / 10);
+    countBadgeLabel_->setStyleSheet(QStringLiteral("font-size: %1px;").arg(badgeFontSize));
 
     if (closeButton_) {
         closeButton_->setFixedHeight(qMax(1, styleMetrics_.clearHeight));
@@ -730,7 +756,9 @@ void NotificationCenterPanel::applyClearButtonShadows()
 void NotificationCenterPanel::updateHeader()
 {
     const int count = entries_.size();
-    countBadgeLabel_->setText(QString::number(count));
+    countBadgeLabel_->setText(count > kBadgeDisplayLimit
+                                  ? QStringLiteral("99+")
+                                  : QString::number(count));
     countBadgeLabel_->setVisible(count > 0);
     clearButton_->setEnabled(count > 0);
     ensureCloseButtonInteractivity();
@@ -797,7 +825,8 @@ void NotificationCenterPanel::clearNotifications(uint reason)
 
 void NotificationCenterPanel::enforceCapacity()
 {
-    while (entries_.size() > config_.panel.maxTrackedNotifications) {
+    const int maxTracked = qMax(1, qMin(config_.panel.maxTrackedNotifications, kMaxStoredNotifications));
+    while (entries_.size() > maxTracked) {
         NotificationEntry *oldest = entries_.first();
         if (!oldest) {
             break;
@@ -2019,7 +2048,7 @@ void NotificationCenterPanel::trimNotificationHistoryFile() const
     }
     file.close();
 
-    const int maxEntries = qMax(1, config_.notifications.historyMaxEntries);
+    const int maxEntries = qMax(1, qMin(config_.notifications.historyMaxEntries, kMaxStoredNotifications));
     if (lines.size() <= maxEntries) {
         return;
     }
@@ -2077,7 +2106,7 @@ void NotificationCenterPanel::loadNotificationHistory()
     }
 
     loadingHistory_ = true;
-    const int maxEntries = qMax(1, config_.notifications.historyMaxEntries);
+    const int maxEntries = qMax(1, qMin(config_.notifications.historyMaxEntries, kMaxStoredNotifications));
     const int startIndex = qMax(0, records.size() - maxEntries);
     for (int index = startIndex; index < records.size(); ++index) {
         const QString recordKey = records.at(index).first;

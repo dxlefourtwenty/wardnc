@@ -39,6 +39,7 @@ struct WardNcPanelConfig {
     int maxTrackedNotifications = 400;
     bool showHandle = true;
     QString scrollbarPosition = QStringLiteral("auto");
+    QString headerGlpyh = QStringLiteral("󰂚");
     QString title = QStringLiteral("Notifications");
     QString footerText = QStringLiteral("wardnc");
 };

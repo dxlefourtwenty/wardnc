@@ -108,6 +108,7 @@ private:
         int badgeHeight = 22;
         int badgeMinWidth = 30;
         int badgePaddingX = 14;
+        int badgeFontSize = 11;
         int notificationGap = 10;
         int cardPaddingX = 14;
         int cardPaddingY = 14;

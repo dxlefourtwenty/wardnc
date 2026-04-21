@@ -84,6 +84,7 @@ QString defaultConfigContents()
         "max_tracked_notifications = 400\n"
         "show_handle = true\n"
         "scrollbar_position = \"auto\"\n"
+        "header_glpyh = \"󰂚\"\n"
         "title = \"Notifications\"\n"
         "footer_text = \"wardnc\"\n"
         "\n"
@@ -702,6 +703,9 @@ bool applyPanelEntry(const QString &key, const QString &value, WardNcConfig *con
                                   &config->panel.scrollbarPosition,
                                   QStringLiteral("panel.scrollbar_position"),
                                   error);
+    }
+    if (key == QStringLiteral("header_glpyh")) {
+        return parseSectionString(value, &config->panel.headerGlpyh, QStringLiteral("panel.header_glpyh"), error);
     }
     if (key == QStringLiteral("title")) {
         return parseSectionString(value, &config->panel.title, QStringLiteral("panel.title"), error);

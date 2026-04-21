@@ -34,7 +34,8 @@ max_visible_notifications = 120
 max_tracked_notifications = 400
 show_handle = true
 scrollbar_position = "auto"
-title = "Notifications"
+header_glpyh = "󰂚"
+title = "Notifications "
 footer_text = "wardnc"
 
 [animation]
