@@ -17,16 +17,17 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
+#include <QEvent>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLayoutItem>
-#include <QPainter>
+#include <QMouseEvent>
 #include <QPixmap>
-#include <QPen>
 #include <QProcess>
 #include <QProcessEnvironment>
 #include <QPropertyAnimation>
 #include <QPushButton>
+#include <QLineEdit>
 #include <QRegularExpression>
 #include <QRegion>
 #include <QScreen>
@@ -298,27 +299,6 @@ QColor styleColorValue(const QHash<QString, QString> &styleVariables,
     return parsed.isValid() ? parsed : fallback;
 }
 
-QIcon dismissGlyphIcon(int buttonSize, const QColor &color)
-{
-    const int size = qMax(12, buttonSize);
-    QPixmap pixmap(size, size);
-    pixmap.fill(Qt::transparent);
-
-    QPainter painter(&pixmap);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-
-    QPen pen(color);
-    pen.setWidthF(qMax(1.6, size * 0.11));
-    pen.setCapStyle(Qt::RoundCap);
-    painter.setPen(pen);
-
-    const qreal inset = size * 0.32;
-    painter.drawLine(QPointF(inset, inset), QPointF(size - inset, size - inset));
-    painter.drawLine(QPointF(size - inset, inset), QPointF(inset, size - inset));
-
-    return QIcon(pixmap);
-}
-
 QPixmap loadPixmapFromImageData(const QVariant &value)
 {
     if (!value.isValid() || !value.canConvert<QDBusArgument>()) {
@@ -484,11 +464,37 @@ void NotificationCenterPanel::buildUi()
         closePanel();
     });
 
+    searchButton_ = new QPushButton(headerBar_);
+    searchButton_->setObjectName(QStringLiteral("clearButton"));
+    searchButton_->setText(QStringLiteral("Search"));
+    searchButton_->setCursor(Qt::PointingHandCursor);
+    connect(searchButton_, &QPushButton::clicked, this, [this]() {
+        toggleSearchBar();
+    });
+
     headerLayout_->addWidget(titleLabel_);
     headerLayout_->addWidget(countBadgeLabel_, 0, Qt::AlignVCenter);
     headerLayout_->addStretch(1);
+    headerLayout_->addWidget(searchButton_, 0, Qt::AlignVCenter);
     headerLayout_->addWidget(closeButton_, 0, Qt::AlignVCenter);
     panelLayout_->addWidget(headerBar_);
+
+    searchBar_ = new QFrame(panelRoot_);
+    searchBar_->setObjectName(QStringLiteral("headerBar"));
+    auto *searchLayout = new QHBoxLayout(searchBar_);
+    searchLayout->setContentsMargins(12, 0, 12, 0);
+    searchLayout->setSpacing(8);
+
+    searchLineEdit_ = new QLineEdit(searchBar_);
+    searchLineEdit_->setObjectName(QStringLiteral("searchLineEdit"));
+    searchLineEdit_->setPlaceholderText(QStringLiteral("Search notifications"));
+    connect(searchLineEdit_, &QLineEdit::textChanged, this, [this](const QString &text) {
+        applySearchQuery(text);
+    });
+
+    searchLayout->addWidget(searchLineEdit_);
+    searchBar_->setVisible(false);
+    panelLayout_->addWidget(searchBar_);
 
     scrollArea_ = new QScrollArea(panelRoot_);
     scrollArea_->setObjectName(QStringLiteral("notificationListScrollArea"));
@@ -617,6 +623,9 @@ void NotificationCenterPanel::applyUiState()
 {
     titleLabel_->setText(formatHeaderTitle(config_.panel.headerGlpyh, config_.panel.title));
     headerBar_->setVisible(config_.panel.showHeader);
+    if (!config_.panel.showHeader && searchBar_) {
+        searchBar_->setVisible(false);
+    }
     footerBar_->setVisible(config_.panel.showFooter);
     clearButton_->setVisible(config_.panel.clearButton);
     sideHandle_->setVisible(config_.panel.showHandle);
@@ -701,6 +710,11 @@ void NotificationCenterPanel::applyStyleMetrics()
         closeButton_->setMinimumWidth(qMax(1, styleMetrics_.clearMinWidth));
         closeButton_->setContentsMargins(styleMetrics_.clearPaddingX, 0, styleMetrics_.clearPaddingX, 0);
     }
+    if (searchButton_) {
+        searchButton_->setFixedHeight(qMax(1, styleMetrics_.clearHeight));
+        searchButton_->setMinimumWidth(qMax(1, styleMetrics_.clearMinWidth));
+        searchButton_->setContentsMargins(styleMetrics_.clearPaddingX, 0, styleMetrics_.clearPaddingX, 0);
+    }
 
     clearButton_->setFixedHeight(qMax(1, styleMetrics_.clearHeight));
     clearButton_->setMinimumWidth(qMax(1, styleMetrics_.clearMinWidth));
@@ -714,6 +728,12 @@ void NotificationCenterPanel::applyStyleMetrics()
                                       clearShadowMarginY,
                                       styleMetrics_.footerPaddingX,
                                       clearShadowMarginY);
+    if (searchBar_) {
+        searchBar_->setFixedHeight(qMax(1, styleMetrics_.headerHeight));
+    }
+    if (searchLineEdit_) {
+        searchLineEdit_->setFixedHeight(qMax(1, styleMetrics_.clearHeight));
+    }
 
     const int handleWidth = qMax(6, qMin(16, qMax(config_.layout.peekWidth, 1)));
     const int handleHeight = qMax(40, qMin(96, height() / 4));
@@ -750,6 +770,7 @@ void NotificationCenterPanel::applyClearButtonShadows()
     };
 
     applyShadow(closeButton_);
+    applyShadow(searchButton_);
     applyShadow(clearButton_);
 }
 
@@ -761,6 +782,9 @@ void NotificationCenterPanel::updateHeader()
                                   : QString::number(count));
     countBadgeLabel_->setVisible(count > 0);
     clearButton_->setEnabled(count > 0);
+    if (searchButton_) {
+        searchButton_->setEnabled(count > 0);
+    }
     ensureCloseButtonInteractivity();
 }
 
@@ -795,6 +819,9 @@ void NotificationCenterPanel::rebuildList()
             if (!entry || !entry->card) {
                 continue;
             }
+            if (!entryMatchesSearch(entry)) {
+                continue;
+            }
             entry->card->setVisible(true);
             listLayout_->addWidget(entry->card);
             ++shown;
@@ -805,6 +832,9 @@ void NotificationCenterPanel::rebuildList()
                 break;
             }
             if (!entry || !entry->card) {
+                continue;
+            }
+            if (!entryMatchesSearch(entry)) {
                 continue;
             }
             entry->card->setVisible(true);
@@ -821,6 +851,64 @@ void NotificationCenterPanel::clearNotifications(uint reason)
     while (!entries_.isEmpty()) {
         removeEntry(entries_.first(), reason);
     }
+}
+
+bool NotificationCenterPanel::entryMatchesSearch(const NotificationEntry *entry) const
+{
+    const QString query = searchQuery_.trimmed();
+    if (query.isEmpty()) {
+        return true;
+    }
+
+    return searchableText(entry).contains(query, Qt::CaseInsensitive);
+}
+
+QString NotificationCenterPanel::searchableText(const NotificationEntry *entry) const
+{
+    if (!entry) {
+        return {};
+    }
+
+    QStringList textChunks;
+    textChunks.reserve(3 + entry->actions.size() * 2);
+
+    textChunks.append(sanitizeText(entry->appName));
+    textChunks.append(sanitizeText(entry->summary));
+    textChunks.append(sanitizeText(entry->body));
+    for (const NotificationActionItem &action : entry->actions) {
+        textChunks.append(sanitizeText(action.key));
+        textChunks.append(sanitizeText(action.label));
+    }
+
+    return textChunks.join(QLatin1Char('\n'));
+}
+
+void NotificationCenterPanel::toggleSearchBar()
+{
+    if (!searchBar_ || !searchLineEdit_) {
+        return;
+    }
+
+    if (searchBar_->isVisible()) {
+        searchBar_->setVisible(false);
+        searchLineEdit_->clear();
+        return;
+    }
+
+    searchBar_->setVisible(true);
+    searchLineEdit_->setFocus();
+    searchLineEdit_->selectAll();
+}
+
+void NotificationCenterPanel::applySearchQuery(const QString &query)
+{
+    const QString trimmedQuery = query.trimmed();
+    if (trimmedQuery == searchQuery_) {
+        return;
+    }
+
+    searchQuery_ = trimmedQuery;
+    rebuildList();
 }
 
 void NotificationCenterPanel::enforceCapacity()
@@ -953,6 +1041,9 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
 
     auto *card = new QFrame(listContainer_);
     card->setObjectName(QStringLiteral("notificationCard"));
+    card->setCursor(Qt::PointingHandCursor);
+    card->setProperty("notificationId", entry->id);
+    card->installEventFilter(this);
 
     auto *cardLayout = new QVBoxLayout(card);
     cardLayout->setContentsMargins(styleMetrics_.cardPaddingX,
@@ -968,6 +1059,7 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
     auto *iconFrame = new QFrame(card);
     iconFrame->setObjectName(QStringLiteral("iconFrame"));
     iconFrame->setFixedSize(styleMetrics_.iconSize, styleMetrics_.iconSize);
+    iconFrame->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     auto *iconLayout = new QVBoxLayout(iconFrame);
     iconLayout->setContentsMargins(styleMetrics_.iconPadding,
@@ -979,6 +1071,7 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
     auto *iconLabel = new QLabel(iconFrame);
     iconLabel->setObjectName(QStringLiteral("iconLabel"));
     iconLabel->setAlignment(Qt::AlignCenter);
+    iconLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     iconLayout->addWidget(iconLabel);
 
     QPixmap iconPixmap = notificationPixmap(entry);
@@ -1001,11 +1094,13 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
     summaryLabel->setObjectName(QStringLiteral("summaryLabel"));
     summaryLabel->setWordWrap(true);
     summaryLabel->setTextFormat(Qt::PlainText);
+    summaryLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     auto *bodyLabel = new QLabel(card);
     bodyLabel->setObjectName(QStringLiteral("bodyLabel"));
     bodyLabel->setWordWrap(true);
     bodyLabel->setTextFormat(Qt::PlainText);
+    bodyLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     const QString summaryText = normalizedSummary(entry->summary, entry->body);
     const QString bodyText = sanitizeText(entry->body).trimmed();
@@ -1032,16 +1127,19 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
     appLabel->setObjectName(QStringLiteral("appNameLabel"));
     appLabel->setText(displayAppName(entry->appName));
     appLabel->setVisible(config_.panel.showAppName && !appLabel->text().trimmed().isEmpty());
+    appLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     auto *timestampLabel = new QLabel(card);
     timestampLabel->setObjectName(QStringLiteral("timestampLabel"));
     timestampLabel->setText(timestampText(entry->createdAt));
     timestampLabel->setVisible(config_.panel.showTimestamp);
+    timestampLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     auto *timestampDayLabel = new QLabel(card);
     timestampDayLabel->setObjectName(QStringLiteral("timestampDayLabel"));
     timestampDayLabel->setText(timestampDayText(entry->createdAt));
     timestampDayLabel->setVisible(config_.panel.showTimestamp);
+    timestampDayLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     metaRow->addWidget(appLabel);
     metaRow->addStretch(1);
@@ -1052,25 +1150,8 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
     textColumn->addWidget(bodyLabel);
     textColumn->addLayout(metaRow);
 
-    auto *dismissButton = new QPushButton(card);
-    dismissButton->setObjectName(QStringLiteral("dismissButton"));
-    dismissButton->setFixedSize(styleMetrics_.dismissButtonSize, styleMetrics_.dismissButtonSize);
-    dismissButton->setText(QString());
-    const QColor dismissColor = styleColorValue(styleVariables_,
-                                                QStringLiteral("--dismiss-color"),
-                                                QColor(QStringLiteral("#d2d8e4")));
-    const int dismissGlyphSize = qMax(10, styleMetrics_.dismissButtonSize - 4);
-    dismissButton->setIcon(dismissGlyphIcon(dismissGlyphSize, dismissColor));
-    dismissButton->setIconSize(QSize(dismissGlyphSize, dismissGlyphSize));
-    dismissButton->setCursor(Qt::PointingHandCursor);
-
-    connect(dismissButton, &QPushButton::clicked, this, [this, entry]() {
-        removeEntry(entry, 2);
-    });
-
     topRow->addWidget(iconFrame, 0, Qt::AlignVCenter);
     topRow->addLayout(textColumn, 1);
-    topRow->addWidget(dismissButton, 0, Qt::AlignTop);
 
     cardLayout->addLayout(topRow);
 
@@ -2485,4 +2566,23 @@ void NotificationCenterPanel::keyPressEvent(QKeyEvent *event)
     }
 
     QWidget::keyPressEvent(event);
+}
+
+bool NotificationCenterPanel::eventFilter(QObject *watched, QEvent *event)
+{
+    auto *card = qobject_cast<QFrame *>(watched);
+    if (card && card->objectName() == QStringLiteral("notificationCard") &&
+        event->type() == QEvent::MouseButtonRelease) {
+        auto *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            bool ok = false;
+            const uint notificationId = card->property("notificationId").toUInt(&ok);
+            if (ok) {
+                closeNotification(notificationId, 2);
+                return true;
+            }
+        }
+    }
+
+    return QWidget::eventFilter(watched, event);
 }

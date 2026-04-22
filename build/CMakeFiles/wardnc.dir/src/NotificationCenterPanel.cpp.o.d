@@ -422,9 +422,10 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: \
  /usr/include/qt6/QtCore/QJsonDocument \
  /usr/include/qt6/QtCore/QJsonObject \
  /usr/include/qt6/QtCore/qjsonobject.h \
- /usr/include/qt6/QtCore/QJsonParseError /usr/include/qt6/QtGui/QKeyEvent \
- /usr/include/qt6/QtGui/qevent.h /usr/include/qt6/QtGui/qeventpoint.h \
- /usr/include/qt6/QtGui/qvector2d.h /usr/include/qt6/QtGui/qvectornd.h \
+ /usr/include/qt6/QtCore/QJsonParseError /usr/include/qt6/QtCore/QEvent \
+ /usr/include/qt6/QtGui/QKeyEvent /usr/include/qt6/QtGui/qevent.h \
+ /usr/include/qt6/QtGui/qeventpoint.h /usr/include/qt6/QtGui/qvector2d.h \
+ /usr/include/qt6/QtGui/qvectornd.h \
  /usr/include/qt6/QtGui/qpointingdevice.h \
  /usr/include/qt6/QtGui/qinputdevice.h /usr/include/qt6/QtGui/qscreen.h \
  /usr/include/qt6/QtCore/QList /usr/include/qt6/QtCore/QObject \
@@ -434,11 +435,9 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: \
  /usr/include/qt6/QtWidgets/QLabel /usr/include/qt6/QtWidgets/qlabel.h \
  /usr/include/qt6/QtWidgets/qframe.h /usr/include/qt6/QtGui/qpicture.h \
  /usr/include/qt6/QtGui/qtextdocument.h \
- /usr/include/qt6/QtWidgets/QLayoutItem /usr/include/qt6/QtGui/QPainter \
- /usr/include/qt6/QtGui/qpainter.h /usr/include/qt6/QtGui/qtextoption.h \
- /usr/include/qt6/QtGui/qpen.h /usr/include/qt6/QtGui/QPixmap \
- /usr/include/qt6/QtGui/QPen /usr/include/qt6/QtCore/QProcess \
- /usr/include/qt6/QtCore/qprocess.h \
+ /usr/include/qt6/QtWidgets/QLayoutItem \
+ /usr/include/qt6/QtGui/QMouseEvent /usr/include/qt6/QtGui/QPixmap \
+ /usr/include/qt6/QtCore/QProcess /usr/include/qt6/QtCore/qprocess.h \
  /usr/include/qt6/QtCore/QProcessEnvironment \
  /usr/include/qt6/QtCore/QPropertyAnimation \
  /usr/include/qt6/QtCore/qpropertyanimation.h \
@@ -447,6 +446,11 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: \
  /usr/include/qt6/QtWidgets/QPushButton \
  /usr/include/qt6/QtWidgets/qpushbutton.h \
  /usr/include/qt6/QtWidgets/qabstractbutton.h \
+ /usr/include/qt6/QtWidgets/QLineEdit \
+ /usr/include/qt6/QtWidgets/qlineedit.h \
+ /usr/include/qt6/QtGui/qtextcursor.h \
+ /usr/include/qt6/QtGui/qtextformat.h /usr/include/qt6/QtGui/qpen.h \
+ /usr/include/qt6/QtGui/qtextoption.h \
  /usr/include/qt6/QtCore/QRegularExpression \
  /usr/include/qt6/QtGui/QRegion /usr/include/qt6/QtGui/QScreen \
  /usr/include/qt6/QtWidgets/QScrollArea \

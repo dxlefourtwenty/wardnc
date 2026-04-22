@@ -1443,8 +1443,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o
  /usr/include/qt6/QtGui/QIcon
  /usr/include/qt6/QtGui/QImage
  /usr/include/qt6/QtGui/QKeyEvent
- /usr/include/qt6/QtGui/QPainter
- /usr/include/qt6/QtGui/QPen
+ /usr/include/qt6/QtGui/QMouseEvent
  /usr/include/qt6/QtGui/QPixmap
  /usr/include/qt6/QtGui/QRegion
  /usr/include/qt6/QtGui/QScreen
@@ -1469,7 +1468,6 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o
  /usr/include/qt6/QtGui/qinputmethod.h
  /usr/include/qt6/QtGui/qkeysequence.h
  /usr/include/qt6/QtGui/qpaintdevice.h
- /usr/include/qt6/QtGui/qpainter.h
  /usr/include/qt6/QtGui/qpalette.h
  /usr/include/qt6/QtGui/qpen.h
  /usr/include/qt6/QtGui/qpicture.h
@@ -1484,7 +1482,9 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o
  /usr/include/qt6/QtGui/qscreen_platform.h
  /usr/include/qt6/QtGui/qsurface.h
  /usr/include/qt6/QtGui/qsurfaceformat.h
+ /usr/include/qt6/QtGui/qtextcursor.h
  /usr/include/qt6/QtGui/qtextdocument.h
+ /usr/include/qt6/QtGui/qtextformat.h
  /usr/include/qt6/QtGui/qtextoption.h
  /usr/include/qt6/QtGui/qtgui-config.h
  /usr/include/qt6/QtGui/qtguiexports.h
@@ -1499,6 +1499,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o
  /usr/include/qt6/QtWidgets/QHBoxLayout
  /usr/include/qt6/QtWidgets/QLabel
  /usr/include/qt6/QtWidgets/QLayoutItem
+ /usr/include/qt6/QtWidgets/QLineEdit
  /usr/include/qt6/QtWidgets/QPushButton
  /usr/include/qt6/QtWidgets/QScrollArea
  /usr/include/qt6/QtWidgets/QScrollBar
@@ -1514,6 +1515,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o
  /usr/include/qt6/QtWidgets/qlabel.h
  /usr/include/qt6/QtWidgets/qlayout.h
  /usr/include/qt6/QtWidgets/qlayoutitem.h
+ /usr/include/qt6/QtWidgets/qlineedit.h
  /usr/include/qt6/QtWidgets/qpushbutton.h
  /usr/include/qt6/QtWidgets/qscrollarea.h
  /usr/include/qt6/QtWidgets/qscrollbar.h

@@ -168,6 +168,17 @@ QPushButton#clearButton:pressed {
     background: var(--clear-hover-bg);
 }
 
+QLineEdit#searchLineEdit {
+    color: var(--body-color);
+    background: var(--panel-bg);
+    border: var(--panel-border-width) solid var(--panel-border);
+    border-radius: var(--clear-radius);
+    font-size: var(--body-size);
+    padding: 0px var(--header-padding-x);
+    selection-background-color: var(--clear-bg);
+    selection-color: var(--clear-color);
+}
+
 QFrame#notificationCard {
     background: var(--card-bg);
     border: var(--card-border-width) solid var(--card-border);

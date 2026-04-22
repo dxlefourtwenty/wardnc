@@ -16,6 +16,7 @@
 class QFrame;
 class QLabel;
 class QHBoxLayout;
+class QLineEdit;
 class QPushButton;
 class QPropertyAnimation;
 class QScreen;
@@ -88,6 +89,7 @@ public slots:
 protected:
     void resizeEvent(QResizeEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private slots:
     void applyConfig(const WardNcConfig &config);
@@ -143,6 +145,10 @@ private:
     void rebuildList();
     void clearNotifications(uint reason = 2);
     void enforceCapacity();
+    bool entryMatchesSearch(const NotificationEntry *entry) const;
+    QString searchableText(const NotificationEntry *entry) const;
+    void toggleSearchBar();
+    void applySearchQuery(const QString &query);
 
     NotificationEntry *findEntryById(uint id) const;
     NotificationEntry *findEntryByStackTag(const QString &stackTag) const;
@@ -237,6 +243,9 @@ private:
     QLabel *titleLabel_ = nullptr;
     QLabel *countBadgeLabel_ = nullptr;
     QPushButton *closeButton_ = nullptr;
+    QPushButton *searchButton_ = nullptr;
+    QFrame *searchBar_ = nullptr;
+    QLineEdit *searchLineEdit_ = nullptr;
     QPushButton *clearButton_ = nullptr;
     QScrollArea *scrollArea_ = nullptr;
     QWidget *listContainer_ = nullptr;
@@ -258,6 +267,7 @@ private:
     bool open_ = false;
     bool stateWatcherReady_ = false;
     bool historyWatcherReady_ = false;
+    QString searchQuery_;
     bool writingState_ = false;
     bool loadingHistory_ = false;
     bool writingHistory_ = false;

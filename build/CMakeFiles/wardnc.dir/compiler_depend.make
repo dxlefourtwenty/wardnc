@@ -1441,8 +1441,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtGui/QIcon \
   /usr/include/qt6/QtGui/QImage \
   /usr/include/qt6/QtGui/QKeyEvent \
-  /usr/include/qt6/QtGui/QPainter \
-  /usr/include/qt6/QtGui/QPen \
+  /usr/include/qt6/QtGui/QMouseEvent \
   /usr/include/qt6/QtGui/QPixmap \
   /usr/include/qt6/QtGui/QRegion \
   /usr/include/qt6/QtGui/QScreen \
@@ -1467,7 +1466,6 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtGui/qinputmethod.h \
   /usr/include/qt6/QtGui/qkeysequence.h \
   /usr/include/qt6/QtGui/qpaintdevice.h \
-  /usr/include/qt6/QtGui/qpainter.h \
   /usr/include/qt6/QtGui/qpalette.h \
   /usr/include/qt6/QtGui/qpen.h \
   /usr/include/qt6/QtGui/qpicture.h \
@@ -1482,7 +1480,9 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtGui/qscreen_platform.h \
   /usr/include/qt6/QtGui/qsurface.h \
   /usr/include/qt6/QtGui/qsurfaceformat.h \
+  /usr/include/qt6/QtGui/qtextcursor.h \
   /usr/include/qt6/QtGui/qtextdocument.h \
+  /usr/include/qt6/QtGui/qtextformat.h \
   /usr/include/qt6/QtGui/qtextoption.h \
   /usr/include/qt6/QtGui/qtgui-config.h \
   /usr/include/qt6/QtGui/qtguiexports.h \
@@ -1497,6 +1497,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtWidgets/QHBoxLayout \
   /usr/include/qt6/QtWidgets/QLabel \
   /usr/include/qt6/QtWidgets/QLayoutItem \
+  /usr/include/qt6/QtWidgets/QLineEdit \
   /usr/include/qt6/QtWidgets/QPushButton \
   /usr/include/qt6/QtWidgets/QScrollArea \
   /usr/include/qt6/QtWidgets/QScrollBar \
@@ -1512,6 +1513,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtWidgets/qlabel.h \
   /usr/include/qt6/QtWidgets/qlayout.h \
   /usr/include/qt6/QtWidgets/qlayoutitem.h \
+  /usr/include/qt6/QtWidgets/qlineedit.h \
   /usr/include/qt6/QtWidgets/qpushbutton.h \
   /usr/include/qt6/QtWidgets/qscrollarea.h \
   /usr/include/qt6/QtWidgets/qscrollbar.h \
@@ -4085,6 +4087,8 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/libgcc.a:
 
+/usr/lib/libstdc++.so:
+
 /usr/lib/cmake/Qt6/QtPublicTargetHelpers.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicSbomPythonHelpers.cmake:
@@ -4112,6 +4116,8 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o:
 /usr/include/bits/posix2_lim.h:
 
 /usr/lib/cmake/Qt6/Qt6VersionlessAliasTargets.cmake:
+
+/usr/include/qt6/QtWidgets/QLineEdit:
 
 /usr/lib/cmake/Qt6/Qt6ConfigExtras.cmake:
 
@@ -4168,6 +4174,8 @@ CMakeFiles/wardnc.dir/src/WardNcConfig.cpp.o:
 /usr/include/qt6/QtGui/qfont.h:
 
 /usr/include/qt6/QtGui/qtguiglobal.h:
+
+/usr/include/qt6/QtWidgets/qlineedit.h:
 
 /usr/include/qt6/QtCore/q20bit.h:
 
@@ -4284,6 +4292,8 @@ wardnc_autogen/moc_predefs.h:
 /usr/include/qt6/QtCore/qmetatype.h:
 
 /usr/include/qt6/QtCore/qmath.h:
+
+/usr/include/qt6/QtGui/qtextformat.h:
 
 /usr/include/qt6/QtCore/qmargins.h:
 
@@ -4967,6 +4977,10 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 
 /usr/include/qt6/QtGui/qvector2d.h:
 
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o:
+
+/usr/include/bits/typesizes.h:
+
 CMakeFiles/4.3.1/CMakeCXXCompiler.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6DmaBufServerBufferPluginTargets.cmake:
@@ -5016,10 +5030,6 @@ CMakeFiles/4.3.1/CMakeCXXCompiler.cmake:
 /usr/include/bits/types/cookie_io_functions_t.h:
 
 /usr/include/c++/15.2.1/bits/stl_algobase.h:
-
-/usr/include/bits/setjmp.h:
-
-/usr/lib/cmake/Qt6Gui/Qt6DrmEglServerBufferPluginAdditionalTargetInfo.cmake:
 
 /usr/include/qt6/QtCore/qlatin1stringview.h:
 
@@ -5508,6 +5518,12 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o:
 /usr/lib/cmake/Qt6Gui/Qt6GuiTargets-relwithdebinfo.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6GuiTargets.cmake:
+
+/usr/include/bits/setjmp.h:
+
+/usr/lib/cmake/Qt6Gui/Qt6DrmEglServerBufferPluginAdditionalTargetInfo.cmake:
+
+/usr/include/qt6/QtGui/QMouseEvent:
 
 /usr/lib/cmake/Qt6/QtPublicGitHelpers.cmake:
 
@@ -6229,10 +6245,6 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 
 /usr/include/qt6/QtGui/QKeyEvent:
 
-/usr/include/qt6/QtGui/QPainter:
-
-/usr/include/qt6/QtGui/QPen:
-
 /usr/share/cmake/Modules/Internal/CheckFlagCommonConfig.cmake:
 
 /usr/include/qt6/QtGui/QPixmap:
@@ -6247,11 +6259,9 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 
 /usr/include/qt6/QtGui/qinputmethod.h:
 
-/usr/include/qt6/QtGui/qpainter.h:
-
-wardnc_autogen/UVLADIE3JM/moc_NotificationCenterPanel.cpp:
-
 /usr/include/qt6/QtGui/qscreen.h:
+
+/usr/include/qt6/QtGui/qtextcursor.h:
 
 /usr/include/qt6/QtGui/qtextoption.h:
 
@@ -6321,6 +6331,8 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationCenterPanel.cpp:
 
 /usr/include/qt6/QtWidgets/qapplication.h:
 
+wardnc_autogen/UVLADIE3JM/moc_NotificationCenterPanel.cpp:
+
 /usr/include/c++/15.2.1/bits/refwrap.h:
 
 /usr/include/c++/15.2.1/bits/stl_iterator.h:
@@ -6346,9 +6358,3 @@ wardnc_autogen/UVLADIE3JM/moc_WardNcControl.cpp:
 /usr/lib/libgcc_s.so.1:
 
 /usr/lib/libm.so:
-
-/usr/lib/libstdc++.so:
-
-/usr/include/bits/typesizes.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o:
