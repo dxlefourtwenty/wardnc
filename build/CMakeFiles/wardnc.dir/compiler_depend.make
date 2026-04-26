@@ -2874,15 +2874,21 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/assert.h \
   /usr/include/bits/atomic_wide_counter.h \
   /usr/include/bits/byteswap.h \
+  /usr/include/bits/confname.h \
   /usr/include/bits/cpu-set.h \
   /usr/include/bits/endian.h \
   /usr/include/bits/endianness.h \
+  /usr/include/bits/environments.h \
   /usr/include/bits/errno.h \
+  /usr/include/bits/fcntl-linux.h \
+  /usr/include/bits/fcntl.h \
   /usr/include/bits/floatn-common.h \
   /usr/include/bits/floatn.h \
   /usr/include/bits/flt-eval-method.h \
   /usr/include/bits/fp-fast.h \
   /usr/include/bits/fp-logb.h \
+  /usr/include/bits/getopt_core.h \
+  /usr/include/bits/getopt_posix.h \
   /usr/include/bits/iscanonical.h \
   /usr/include/bits/libc-header-start.h \
   /usr/include/bits/libm-simd-decl-stubs.h \
@@ -2894,14 +2900,30 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/bits/mathcalls-macros.h \
   /usr/include/bits/mathcalls-narrow.h \
   /usr/include/bits/mathcalls.h \
+  /usr/include/bits/openat2.h \
   /usr/include/bits/posix1_lim.h \
   /usr/include/bits/posix2_lim.h \
+  /usr/include/bits/posix_opt.h \
   /usr/include/bits/pthread_stack_min-dynamic.h \
   /usr/include/bits/pthreadtypes-arch.h \
   /usr/include/bits/pthreadtypes.h \
   /usr/include/bits/sched.h \
   /usr/include/bits/select.h \
   /usr/include/bits/setjmp.h \
+  /usr/include/bits/sigaction.h \
+  /usr/include/bits/sigcontext.h \
+  /usr/include/bits/sigevent-consts.h \
+  /usr/include/bits/siginfo-arch.h \
+  /usr/include/bits/siginfo-consts-arch.h \
+  /usr/include/bits/siginfo-consts.h \
+  /usr/include/bits/signal_ext.h \
+  /usr/include/bits/signum-arch.h \
+  /usr/include/bits/signum-generic.h \
+  /usr/include/bits/sigstack.h \
+  /usr/include/bits/sigstksz.h \
+  /usr/include/bits/sigthread.h \
+  /usr/include/bits/ss_flags.h \
+  /usr/include/bits/stat.h \
   /usr/include/bits/stdint-intn.h \
   /usr/include/bits/stdint-least.h \
   /usr/include/bits/stdint-uintn.h \
@@ -2909,6 +2931,7 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
+  /usr/include/bits/struct_stat.h \
   /usr/include/bits/thread-shared-types.h \
   /usr/include/bits/time.h \
   /usr/include/bits/time64.h \
@@ -2922,17 +2945,25 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/bits/types/__locale_t.h \
   /usr/include/bits/types/__mbstate_t.h \
   /usr/include/bits/types/__sigset_t.h \
+  /usr/include/bits/types/__sigval_t.h \
   /usr/include/bits/types/clock_t.h \
   /usr/include/bits/types/clockid_t.h \
   /usr/include/bits/types/cookie_io_functions_t.h \
   /usr/include/bits/types/error_t.h \
   /usr/include/bits/types/locale_t.h \
   /usr/include/bits/types/mbstate_t.h \
+  /usr/include/bits/types/sig_atomic_t.h \
+  /usr/include/bits/types/sigevent_t.h \
+  /usr/include/bits/types/siginfo_t.h \
   /usr/include/bits/types/sigset_t.h \
+  /usr/include/bits/types/sigval_t.h \
+  /usr/include/bits/types/stack_t.h \
   /usr/include/bits/types/struct_FILE.h \
   /usr/include/bits/types/struct___jmp_buf_tag.h \
+  /usr/include/bits/types/struct_iovec.h \
   /usr/include/bits/types/struct_itimerspec.h \
   /usr/include/bits/types/struct_sched_param.h \
+  /usr/include/bits/types/struct_sigstack.h \
   /usr/include/bits/types/struct_timespec.h \
   /usr/include/bits/types/struct_timeval.h \
   /usr/include/bits/types/struct_tm.h \
@@ -2942,6 +2973,7 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/bits/typesizes.h \
   /usr/include/bits/uintn-identity.h \
   /usr/include/bits/uio_lim.h \
+  /usr/include/bits/unistd_ext.h \
   /usr/include/bits/waitflags.h \
   /usr/include/bits/waitstatus.h \
   /usr/include/bits/wchar.h \
@@ -3070,6 +3102,7 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/c++/15.2.1/codecvt \
   /usr/include/c++/15.2.1/compare \
   /usr/include/c++/15.2.1/concepts \
+  /usr/include/c++/15.2.1/csignal \
   /usr/include/c++/15.2.1/cstddef \
   /usr/include/c++/15.2.1/cstdint \
   /usr/include/c++/15.2.1/cstdio \
@@ -3156,14 +3189,18 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/ctype.h \
   /usr/include/endian.h \
   /usr/include/errno.h \
+  /usr/include/fcntl.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
   /usr/include/gnu/stubs-64.h \
   /usr/include/gnu/stubs.h \
   /usr/include/libintl.h \
   /usr/include/limits.h \
+  /usr/include/linux/close_range.h \
   /usr/include/linux/errno.h \
+  /usr/include/linux/falloc.h \
   /usr/include/linux/limits.h \
+  /usr/include/linux/openat2.h \
   /usr/include/linux/posix_types.h \
   /usr/include/linux/sched/types.h \
   /usr/include/linux/stddef.h \
@@ -3186,6 +3223,7 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/qt6/QtCore/QPointer \
   /usr/include/qt6/QtCore/QProcessEnvironment \
   /usr/include/qt6/QtCore/QSet \
+  /usr/include/qt6/QtCore/QSocketNotifier \
   /usr/include/qt6/QtCore/QStandardPaths \
   /usr/include/qt6/QtCore/QString \
   /usr/include/qt6/QtCore/QStringList \
@@ -3301,6 +3339,7 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/qt6/QtCore/qsharedpointer.h \
   /usr/include/qt6/QtCore/qsharedpointer_impl.h \
   /usr/include/qt6/QtCore/qsize.h \
+  /usr/include/qt6/QtCore/qsocketnotifier.h \
   /usr/include/qt6/QtCore/qspan.h \
   /usr/include/qt6/QtCore/qstandardpaths.h \
   /usr/include/qt6/QtCore/qstdlibdetection.h \
@@ -3404,6 +3443,7 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/qt6/QtWidgets/qtwidgetsglobal.h \
   /usr/include/qt6/QtWidgets/qwidget.h \
   /usr/include/sched.h \
+  /usr/include/signal.h \
   /usr/include/stdc-predef.h \
   /usr/include/stdint.h \
   /usr/include/stdio.h \
@@ -3414,7 +3454,9 @@ CMakeFiles/wardnc.dir/src/main.cpp.o: /home/dxle/builds/wardnc/src/main.cpp \
   /usr/include/sys/select.h \
   /usr/include/sys/single_threaded.h \
   /usr/include/sys/types.h \
+  /usr/include/sys/ucontext.h \
   /usr/include/time.h \
+  /usr/include/unistd.h \
   /usr/include/wchar.h \
   /usr/include/wctype.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h \
@@ -4071,8 +4113,6 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o:
 
 /usr/lib/libX11.so.6:
 
-/usr/lib/libQt6WaylandClient.so.6:
-
 /usr/lib/libQt6DBus.so.6.11.0:
 
 /usr/lib/libLayerShellQtInterface.so.6.6.4:
@@ -4089,6 +4129,34 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o:
 
 /usr/lib/libstdc++.so:
 
+/usr/lib/libm.so:
+
+/usr/lib/crti.o:
+
+/usr/lib/Scrt1.o:
+
+/usr/include/qt6/QtCore/qtmocconstants.h:
+
+wardnc_autogen/UVLADIE3JM/moc_WardNcControl.cpp:
+
+wardnc_autogen/UVLADIE3JM/moc_NotificationCenterPanel.cpp:
+
+/usr/include/signal.h:
+
+/usr/include/qt6/QtDBus/qdbusreply.h:
+
+/usr/include/qt6/QtDBus/qdbuspendingreply.h:
+
+/usr/include/qt6/QtDBus/qdbusmessage.h:
+
+/usr/include/qt6/QtDBus/qdbusabstractinterface.h:
+
+/usr/include/qt6/QtDBus/QDBusInterface:
+
+/usr/include/qt6/QtDBus/QDBusConnectionInterface:
+
+/usr/include/qt6/QtDBus/QDBusConnection:
+
 /usr/lib/cmake/Qt6/QtPublicTargetHelpers.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicSbomPythonHelpers.cmake:
@@ -4098,8 +4166,6 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o:
 /usr/lib/cmake/Qt6/QtPublicSbomLicenseHelpers.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicSbomHelpers.cmake:
-
-/usr/include/qt6/QtDBus/qdbuspendingreply.h:
 
 /usr/include/qt6/QtGui/qfontinfo.h:
 
@@ -4126,8 +4192,6 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o:
 /usr/lib/cmake/Qt6/FindWrapVulkanHeaders.cmake:
 
 /usr/lib/cmake/Qt6/FindWrapAtomic.cmake:
-
-/usr/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginConfig.cmake:
 
 /usr/lib/cmake/LayerShellQt/LayerShellQtConfigVersion.cmake:
 
@@ -4180,8 +4244,6 @@ CMakeFiles/wardnc.dir/src/WardNcConfig.cpp.o:
 /usr/include/qt6/QtCore/q20bit.h:
 
 /usr/include/qt6/QtGui/QColor:
-
-/usr/include/qt6/QtCore/qyieldcpu.h:
 
 /usr/include/qt6/QtCore/qvarlengtharray.h:
 
@@ -4297,13 +4359,9 @@ wardnc_autogen/moc_predefs.h:
 
 /usr/include/qt6/QtCore/qmargins.h:
 
-/usr/include/c++/15.2.1/bits/locale_conv.h:
-
 /usr/include/qt6/QtCore/qmap.h:
 
 /usr/include/qt6/QtGui/qrgba64.h:
-
-/usr/include/qt6/QtCore/qmalloc.h:
 
 /usr/include/bits/stdint-uintn.h:
 
@@ -4324,8 +4382,6 @@ wardnc_autogen/moc_predefs.h:
 /usr/include/bits/stdint-intn.h:
 
 /usr/include/bits/wctype-wchar.h:
-
-/usr/include/qt6/QtCore/qglobal.h:
 
 /usr/include/c++/15.2.1/tr1/gamma.tcc:
 
@@ -4413,7 +4469,7 @@ wardnc_autogen/moc_predefs.h:
 
 /usr/include/c++/15.2.1/bits/ostream_insert.h:
 
-/usr/lib/cmake/Qt6/QtPublicWindowsHelpers.cmake:
+/usr/include/bits/types/sigevent_t.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QVkKhrDisplayIntegrationPluginTargets.cmake:
 
@@ -4468,6 +4524,10 @@ wardnc_autogen/moc_predefs.h:
 /usr/include/qt6/QtCore/q20memory.h:
 
 /usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsVersionlessTargets.cmake:
+
+/usr/include/qt6/QtDBus/QDBusError:
+
+/usr/include/qt6/QtCore/q20iterator.h:
 
 /usr/include/c++/15.2.1/chrono:
 
@@ -4553,10 +4613,6 @@ wardnc_autogen/moc_predefs.h:
 
 /usr/include/features-time64.h:
 
-/usr/lib/cmake/Qt6/QtPublicAppleHelpers.cmake:
-
-/usr/include/qt6/QtDBus/QDBusReply:
-
 /usr/include/c++/15.2.1/bits/ptr_traits.h:
 
 /usr/share/cmake/Modules/CMakeGenericSystem.cmake:
@@ -4566,6 +4622,8 @@ wardnc_autogen/moc_predefs.h:
 /usr/bin/cmake:
 
 /usr/include/qt6/QtGui/qpicture.h:
+
+/usr/include/linux/falloc.h:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/gthr.h:
 
@@ -4589,9 +4647,13 @@ wardnc_autogen/moc_predefs.h:
 
 /usr/include/c++/15.2.1/bits/chrono.h:
 
-/usr/include/sys/select.h:
+/usr/include/qt6/QtDBus/qdbusconnection.h:
+
+/usr/include/qt6/QtCore/qtcore-config.h:
 
 /usr/include/c++/15.2.1/bits/cxxabi_init_exception.h:
+
+/usr/include/bits/types/struct_sigstack.h:
 
 /usr/include/c++/15.2.1/bits/charconv.h:
 
@@ -4741,6 +4803,8 @@ wardnc_autogen/moc_predefs.h:
 
 /usr/lib/cmake/Qt6Widgets/Qt6WidgetsTargetsPrecheck.cmake:
 
+/usr/include/linux/openat2.h:
+
 /home/dxle/builds/wardnc/src/main.cpp:
 
 /usr/include/bits/waitstatus.h:
@@ -4752,6 +4816,12 @@ wardnc_autogen/moc_predefs.h:
 /usr/share/cmake/Modules/FindOpenGL.cmake:
 
 /usr/include/qt6/QtCore/qdatetime.h:
+
+wardnc_autogen/mocs_compilation.cpp:
+
+/usr/include/c++/15.2.1/bits/locale_facets_nonio.tcc:
+
+/usr/include/bits/sigcontext.h:
 
 /usr/include/c++/15.2.1/bits/stl_set.h:
 
@@ -4807,8 +4877,6 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 
 /usr/include/qt6/QtCore/qpointer.h:
 
-/usr/include/qt6/QtDBus/qdbusinterface.h:
-
 /usr/include/c++/15.2.1/istream:
 
 /usr/include/c++/15.2.1/bits/erase_if.h:
@@ -4826,8 +4894,6 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 /usr/include/linux/posix_types.h:
 
 /usr/include/c++/15.2.1/bits/utility.h:
-
-/usr/include/qt6/QtDBus/qdbusmessage.h:
 
 /usr/include/qt6/QtCore/qhashfunctions.h:
 
@@ -4927,7 +4993,13 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QEglFSEmulatorIntegrationPluginTargets-relwithdebinfo.cmake:
 
+/usr/include/qt6/QtWidgets/QApplication:
+
+/usr/include/qt6/QtGui/qtguiexports.h:
+
 /usr/include/qt6/QtCore/QList:
+
+/usr/include/bits/types/sigval_t.h:
 
 /usr/include/c++/15.2.1/ctime:
 
@@ -4952,6 +5024,10 @@ CMakeFiles/4.3.1/CMakeSystem.cmake:
 /usr/include/c++/15.2.1/debug/debug.h:
 
 /usr/lib/cmake/Qt6Widgets/Qt6WidgetsVersionlessAliasTargets.cmake:
+
+/usr/include/c++/15.2.1/bits/locale_conv.h:
+
+/usr/include/bits/siginfo-arch.h:
 
 /usr/include/qt6/QtCore/qbytearray.h:
 
@@ -5011,8 +5087,6 @@ CMakeFiles/4.3.1/CMakeCXXCompiler.cmake:
 
 /home/dxle/builds/wardnc/src/NotificationCenterPanel.cpp:
 
-/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:
-
 /usr/share/cmake/Modules/Platform/Linker/Linux-GNU-CXX.cmake:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/atomic_word.h:
@@ -5059,6 +5133,8 @@ CMakeFiles/4.3.1/CMakeCXXCompiler.cmake:
 
 /usr/include/alloca.h:
 
+/usr/include/bits/sigstksz.h:
+
 /usr/include/linux/types.h:
 
 /usr/include/c++/15.2.1/bits/locale_classes.h:
@@ -5093,11 +5169,17 @@ CMakeFiles/4.3.1/CMakeCXXCompiler.cmake:
 
 /usr/include/c++/15.2.1/cmath:
 
+/usr/include/bits/stat.h:
+
 /usr/lib/cmake/Qt6Gui/Qt6QVncIntegrationPluginTargetsPrecheck.cmake:
 
 /usr/include/c++/15.2.1/bits/new_allocator.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QEglFSIntegrationPluginAdditionalTargetInfo.cmake:
+
+/usr/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginConfig.cmake:
+
+/usr/include/bits/siginfo-consts.h:
 
 /usr/include/c++/15.2.1/system_error:
 
@@ -5123,6 +5205,8 @@ CMakeFiles/4.3.1/CMakeCXXCompiler.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6ShmServerBufferPluginAdditionalTargetInfo.cmake:
 
+/usr/include/bits/struct_stat.h:
+
 /usr/include/c++/15.2.1/bits/range_access.h:
 
 /usr/include/sys/single_threaded.h:
@@ -5145,7 +5229,15 @@ CMakeFiles/4.3.1/CMakeCXXCompiler.cmake:
 
 /usr/include/c++/15.2.1/bits/specfun.h:
 
+/usr/include/qt6/QtCore/QSocketNotifier:
+
 /usr/include/qt6/QtCore/QMap:
+
+wardnc_autogen/UVLADIE3JM/moc_WardNcConfig.cpp:
+
+/usr/include/c++/15.2.1/bits/refwrap.h:
+
+/usr/include/c++/15.2.1/bits/stl_iterator.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QEglFSKmsGbmIntegrationPluginTargets.cmake:
 
@@ -5179,10 +5271,6 @@ CMakeFiles/4.3.1/CMakeCXXCompiler.cmake:
 
 /usr/include/c++/15.2.1/bits/stl_uninitialized.h:
 
-/usr/include/c++/15.2.1/bits/locale_facets_nonio.tcc:
-
-wardnc_autogen/mocs_compilation.cpp:
-
 /usr/lib/crtn.o:
 
 /usr/include/asm-generic/types.h:
@@ -5207,6 +5295,12 @@ wardnc_autogen/mocs_compilation.cpp:
 
 /usr/include/c++/15.2.1/bits/unordered_map.h:
 
+/usr/include/qt6/QtWidgets/qapplication.h:
+
+/usr/include/bits/types/FILE.h:
+
+/usr/include/qt6/QtGui/qicon.h:
+
 /usr/include/c++/15.2.1/bits/unordered_set.h:
 
 /usr/lib32/libXdmcp.so.6:
@@ -5215,13 +5309,13 @@ wardnc_autogen/mocs_compilation.cpp:
 
 /usr/lib/cmake/Qt6Gui/Qt6QXcbEglIntegrationPluginTargetsPrecheck.cmake:
 
+/usr/include/bits/openat2.h:
+
 /usr/include/c++/15.2.1/pstl/glue_numeric_defs.h:
 
 /usr/lib/libpng16.so.16:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h:
-
-/usr/include/qt6/QtDBus/qdbusabstractinterface.h:
 
 /usr/lib/cmake/Qt6Widgets/Qt6WidgetsTargets-relwithdebinfo.cmake:
 
@@ -5269,6 +5363,8 @@ wardnc_autogen/mocs_compilation.cpp:
 
 /usr/include/qt6/QtCore/qcheckedint_impl.h:
 
+/usr/include/sys/ucontext.h:
+
 /usr/include/c++/15.2.1/cstddef:
 
 /usr/lib/cmake/Qt6Gui/Qt6QEglFSEmulatorIntegrationPluginTargets.cmake:
@@ -5292,8 +5388,6 @@ wardnc_autogen/mocs_compilation.cpp:
 /usr/lib/cmake/Qt6/QtPublicPluginHelpers.cmake:
 
 /usr/include/c++/15.2.1/bits/shared_ptr_base.h:
-
-/usr/include/qt6/QtDBus/QDBusConnectionInterface:
 
 /usr/include/sched.h:
 
@@ -5451,6 +5545,8 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o:
 
 /usr/share/cmake/Modules/Platform/UnixPaths.cmake:
 
+/usr/include/bits/signal_ext.h:
+
 /usr/lib/cmake/Qt6DBus/Qt6DBusTargetsPrecheck.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QEvdevMousePluginAdditionalTargetInfo.cmake:
@@ -5547,6 +5643,12 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWaylandBradientDecorationPluginTargets-relwithdebinfo.cmake:
 
+wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
+
+/usr/include/c++/15.2.1/bits/list.tcc:
+
+/usr/lib/cmake/Qt6Gui/Qt6QEglFSKmsEglDeviceIntegrationPluginAdditionalTargetInfo.cmake:
+
 /usr/lib/cmake/Qt6Gui/Qt6QEglFSKmsEglDeviceIntegrationPluginTargets-relwithdebinfo.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QEglFSKmsEglDeviceIntegrationPluginTargets.cmake:
@@ -5621,6 +5723,8 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWaylandFullScreenShellV1IntegrationPluginAdditionalTargetInfo.cmake:
 
+/usr/include/bits/sigaction.h:
+
 /usr/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginAdditionalTargetInfo.cmake:
 
 /usr/include/c++/15.2.1/bits/uses_allocator.h:
@@ -5635,6 +5739,10 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o:
 
 /usr/include/qt6/QtCore/QDebug:
 
+/usr/include/qt6/QtCore/qglobal.h:
+
+/usr/include/bits/types/siginfo_t.h:
+
 /usr/include/c++/15.2.1/bits/char_traits.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QICNSPluginTargetsPrecheck.cmake:
@@ -5647,9 +5755,17 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o:
 
 /usr/lib/cmake/Qt6Gui/Qt6QICOPluginConfig.cmake:
 
+/usr/include/qt6/QtDBus/qdbusinterface.h:
+
+/usr/include/bits/sigthread.h:
+
 /usr/lib/cmake/Qt6Gui/Qt6QICOPluginTargets-relwithdebinfo.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QICOPluginTargets.cmake:
+
+/usr/include/qt6/QtCore/q20algorithm.h:
+
+/usr/lib/cmake/Qt6Gui/Qt6QICOPluginTargetsPrecheck.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QIbusPlatformInputContextPluginTargets-relwithdebinfo.cmake:
 
@@ -5670,12 +5786,6 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o:
 /usr/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginTargets-relwithdebinfo.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QLibInputPluginTargets-relwithdebinfo.cmake:
-
-/usr/include/c++/15.2.1/bits/list.tcc:
-
-/usr/lib/cmake/Qt6Gui/Qt6QEglFSKmsEglDeviceIntegrationPluginAdditionalTargetInfo.cmake:
-
-wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 
 /usr/lib/cmake/Qt6Gui/Qt6QLibInputPluginTargetsPrecheck.cmake:
 
@@ -5745,6 +5855,10 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 
 /usr/include/qt6/QtCore/QLockFile:
 
+/usr/lib/libgcc_s.so:
+
+/usr/lib/cmake/Qt6Gui/Qt6QSvgIconPluginTargetsPrecheck.cmake:
+
 /usr/include/math.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QSvgPluginAdditionalTargetInfo.cmake:
@@ -5753,7 +5867,9 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 
 /usr/lib/cmake/Qt6Gui/Qt6QSvgPluginTargets.cmake:
 
-/usr/include/qt6/QtCore/qtmocconstants.h:
+/usr/include/qt6/QtCore/qmalloc.h:
+
+/usr/include/bits/fcntl-linux.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QTgaPluginTargets-relwithdebinfo.cmake:
 
@@ -5790,8 +5906,6 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 /usr/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginTargets.cmake:
 
 /usr/include/libintl.h:
-
-/usr/include/qt6/QtDBus/QDBusConnection:
 
 /usr/lib/cmake/Qt6Gui/Qt6QVkKhrDisplayIntegrationPluginConfig.cmake:
 
@@ -5833,6 +5947,8 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWaylandAdwaitaDecorationPluginTargetsPrecheck.cmake:
 
+/usr/include/bits/signum-generic.h:
+
 /usr/lib/cmake/Qt6Gui/Qt6QWaylandBradientDecorationPluginAdditionalTargetInfo.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWaylandBradientDecorationPluginConfig.cmake:
@@ -5852,6 +5968,10 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 /usr/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWaylandFullScreenShellV1IntegrationPluginTargets-relwithdebinfo.cmake:
+
+/usr/include/qt6/QtCore/qtmochelpers.h:
+
+/usr/lib/cmake/Qt6Gui/Qt6QWaylandFullScreenShellV1IntegrationPluginTargetsPrecheck.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWaylandIntegrationPluginTargetsPrecheck.cmake:
 
@@ -5891,6 +6011,8 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWaylandWlShellIntegrationPluginTargets-relwithdebinfo.cmake:
 
+/usr/include/qt6/QtCore/qsocketnotifier.h:
+
 /usr/lib/cmake/Qt6Gui/Qt6QWaylandWlShellIntegrationPluginTargets.cmake:
 
 /usr/include/qt6/QtCore/qvariantmap.h:
@@ -5908,6 +6030,10 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 /usr/lib/cmake/Qt6DBus/Qt6DBusAdditionalTargetInfo.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWbmpPluginTargets.cmake:
+
+/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:
+
+/usr/include/bits/types/stack_t.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWbmpPluginTargetsPrecheck.cmake:
 
@@ -6059,6 +6185,8 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 
 /usr/share/cmake/Modules/Compiler/GNU.cmake:
 
+/usr/include/c++/15.2.1/csignal:
+
 /usr/share/cmake/Modules/FindPackageHandleStandardArgs.cmake:
 
 /usr/share/cmake/Modules/FindVulkan.cmake:
@@ -6070,10 +6198,6 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 /usr/lib/cmake/Qt6Gui/Qt6QWaylandIntegrationPluginAdditionalTargetInfo.cmake:
 
 /usr/share/cmake/Modules/Internal/CMakeCXXLinkerInformation.cmake:
-
-/usr/lib/cmake/Qt6Gui/Qt6QWaylandFullScreenShellV1IntegrationPluginTargetsPrecheck.cmake:
-
-/usr/include/qt6/QtCore/qtmochelpers.h:
 
 /usr/include/bits/uio_lim.h:
 
@@ -6137,6 +6261,8 @@ CMakeFiles/wardnc.dir/wardnc_autogen/mocs_compilation.cpp.o:
 
 /usr/include/qt6/QtCore/qjsonarray.h:
 
+/usr/include/bits/fcntl.h:
+
 /usr/include/c++/15.2.1/codecvt:
 
 /usr/include/qt6/QtCore/qabstracteventdispatcher.h:
@@ -6191,6 +6317,8 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 
 /usr/include/qt6/QtCore/QVariantAnimation:
 
+/usr/include/bits/siginfo-consts-arch.h:
+
 /usr/include/qt6/QtCore/qtconfiginclude.h:
 
 /usr/include/c++/15.2.1/list:
@@ -6226,6 +6354,10 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 /usr/lib/cmake/Qt6/QtPublicSbomGenerationHelpers.cmake:
 
 /usr/include/qt6/QtCore/qurl.h:
+
+/usr/lib/libgcc_s.so.1:
+
+/usr/include/qt6/QtCore/quuid.h:
 
 /usr/include/qt6/QtDBus/QDBusVariant:
 
@@ -6303,58 +6435,36 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h:
 
+/usr/include/bits/sigevent-consts.h:
+
+/usr/include/bits/signum-arch.h:
+
+/usr/include/qt6/QtCore/qyieldcpu.h:
+
+/usr/include/bits/sigstack.h:
+
+/usr/include/bits/ss_flags.h:
+
+/usr/include/sys/select.h:
+
+/usr/include/bits/types/__sigval_t.h:
+
+/usr/lib/libQt6WaylandClient.so.6:
+
+/usr/include/bits/types/sig_atomic_t.h:
+
+/usr/lib/cmake/Qt6/QtPublicWindowsHelpers.cmake:
+
+/usr/include/bits/types/struct_iovec.h:
+
+/usr/include/qt6/QtDBus/QDBusReply:
+
+/usr/lib/cmake/Qt6/QtPublicAppleHelpers.cmake:
+
+/usr/include/fcntl.h:
+
 /usr/include/qt6/QtCore/QCommandLineOption:
 
 /usr/include/qt6/QtCore/QCommandLineParser:
 
 /usr/include/qt6/QtCore/qlockfile.h:
-
-/usr/include/qt6/QtCore/q20iterator.h:
-
-/usr/include/qt6/QtDBus/QDBusError:
-
-/usr/include/qt6/QtDBus/QDBusInterface:
-
-/usr/include/qt6/QtCore/qtcore-config.h:
-
-/usr/include/qt6/QtDBus/qdbusconnection.h:
-
-/usr/include/qt6/QtDBus/qdbusreply.h:
-
-/usr/include/qt6/QtGui/qtguiexports.h:
-
-/usr/include/qt6/QtWidgets/QApplication:
-
-/usr/include/bits/types/FILE.h:
-
-/usr/include/qt6/QtGui/qicon.h:
-
-/usr/include/qt6/QtWidgets/qapplication.h:
-
-wardnc_autogen/UVLADIE3JM/moc_NotificationCenterPanel.cpp:
-
-/usr/include/c++/15.2.1/bits/refwrap.h:
-
-/usr/include/c++/15.2.1/bits/stl_iterator.h:
-
-wardnc_autogen/UVLADIE3JM/moc_WardNcConfig.cpp:
-
-wardnc_autogen/UVLADIE3JM/moc_WardNcControl.cpp:
-
-/usr/lib/cmake/Qt6Gui/Qt6QICOPluginTargetsPrecheck.cmake:
-
-/usr/include/qt6/QtCore/q20algorithm.h:
-
-/usr/lib/Scrt1.o:
-
-/usr/lib/crti.o:
-
-/usr/lib/cmake/Qt6Gui/Qt6QSvgIconPluginTargetsPrecheck.cmake:
-
-/usr/lib/libgcc_s.so:
-
-/usr/include/qt6/QtCore/quuid.h:
-
-/usr/lib/libgcc_s.so.1:
-
-/usr/lib/libm.so:

@@ -108,6 +108,7 @@ public:
 
 public slots:
     void reload();
+    void reloadStyle();
 
 signals:
     void configChanged(const WardNcConfig &config);
@@ -115,6 +116,7 @@ signals:
 
 private:
     void ensureConfigFiles();
+    void loadStyle();
     void refreshWatchers();
 
     QFileSystemWatcher watcher_;

@@ -1334,8 +1334,15 @@ WardNcConfigLoader::WardNcConfigLoader(QObject *parent)
     : QObject(parent)
 {
     ensureConfigFiles();
-    connect(&watcher_, &QFileSystemWatcher::fileChanged, this, &WardNcConfigLoader::reload);
-    connect(&watcher_, &QFileSystemWatcher::directoryChanged, this, &WardNcConfigLoader::reload);
+    connect(&watcher_, &QFileSystemWatcher::fileChanged, this, [this](const QString &path) {
+        if (normalizedPath(path) == normalizedPath(configPath())) {
+            reload();
+            return;
+        }
+
+        reloadStyle();
+    });
+    connect(&watcher_, &QFileSystemWatcher::directoryChanged, this, &WardNcConfigLoader::reloadStyle);
     reload();
 }
 
@@ -1368,6 +1375,23 @@ void WardNcConfigLoader::reload()
         qWarning().noquote() << "wardnc:" << loadedConfig.error;
     }
 
+    loadStyle();
+    refreshWatchers();
+
+    emit configChanged(config_);
+    emit styleChanged(styleSheet_, styleVariables_);
+}
+
+void WardNcConfigLoader::reloadStyle()
+{
+    loadStyle();
+    refreshWatchers();
+
+    emit styleChanged(styleSheet_, styleVariables_);
+}
+
+void WardNcConfigLoader::loadStyle()
+{
     const QString stylePath = resolvedStylePath(config_);
     const StyleLoadResult loadedStyleSheet = loadStyleSheet(stylePath);
     if (loadedStyleSheet.ok) {
@@ -1415,11 +1439,6 @@ void WardNcConfigLoader::reload()
         }
         qWarning().noquote() << "wardnc:" << loadedStyleSheet.error;
     }
-
-    refreshWatchers();
-
-    emit configChanged(config_);
-    emit styleChanged(styleSheet_, styleVariables_);
 }
 
 void WardNcConfigLoader::ensureConfigFiles()

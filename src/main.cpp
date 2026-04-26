@@ -10,7 +10,12 @@
 #include <QDir>
 #include <QLockFile>
 #include <QProcessEnvironment>
+#include <QSocketNotifier>
 #include <QStandardPaths>
+
+#include <csignal>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include "NotificationCenterPanel.h"
 #include "NotificationServer.h"
@@ -24,6 +29,53 @@ constexpr auto kNotificationPath = "/org/freedesktop/Notifications";
 constexpr auto kControlService = "org.dxle.wardnc";
 constexpr auto kControlPath = "/org/dxle/wardnc";
 constexpr auto kControlInterface = "org.dxle.wardnc.Control";
+
+int signalPipe[2] = {-1, -1};
+
+void handleReloadSignal(int)
+{
+    const char byte = 1;
+    if (signalPipe[1] != -1) {
+        (void)::write(signalPipe[1], &byte, sizeof(byte));
+    }
+}
+
+bool installReloadSignalHandler()
+{
+    if (::pipe(signalPipe) != 0) {
+        qWarning() << "Failed to create wardnc reload signal pipe.";
+        return false;
+    }
+
+    const int readFlags = ::fcntl(signalPipe[0], F_GETFL, 0);
+    const int writeFlags = ::fcntl(signalPipe[1], F_GETFL, 0);
+    if (readFlags == -1 || writeFlags == -1 ||
+        ::fcntl(signalPipe[0], F_SETFL, readFlags | O_NONBLOCK) == -1 ||
+        ::fcntl(signalPipe[1], F_SETFL, writeFlags | O_NONBLOCK) == -1) {
+        qWarning() << "Failed to configure wardnc reload signal pipe.";
+        ::close(signalPipe[0]);
+        ::close(signalPipe[1]);
+        signalPipe[0] = -1;
+        signalPipe[1] = -1;
+        return false;
+    }
+
+    struct sigaction action {};
+    action.sa_handler = handleReloadSignal;
+    sigemptyset(&action.sa_mask);
+    action.sa_flags = SA_RESTART;
+
+    if (::sigaction(SIGUSR1, &action, nullptr) != 0) {
+        qWarning() << "Failed to install wardnc SIGUSR1 reload handler.";
+        ::close(signalPipe[0]);
+        ::close(signalPipe[1]);
+        signalPipe[0] = -1;
+        signalPipe[1] = -1;
+        return false;
+    }
+
+    return true;
+}
 
 QString instanceLockPath()
 {
@@ -179,6 +231,20 @@ int main(int argc, char *argv[])
     NotificationCenterPanel panel(&configLoader);
     NotificationServer server;
     WardNcControl control;
+    QSocketNotifier *reloadSignalNotifier = nullptr;
+
+    if (installReloadSignalHandler()) {
+        reloadSignalNotifier = new QSocketNotifier(signalPipe[0], QSocketNotifier::Read, &app);
+        QObject::connect(reloadSignalNotifier,
+                         &QSocketNotifier::activated,
+                         &panel,
+                         [&panel](QSocketDescriptor) {
+                             char bytes[32];
+                             while (::read(signalPipe[0], bytes, sizeof(bytes)) > 0) {
+                             }
+                             panel.reloadStyle();
+                         });
+    }
 
     if (!registerService(bus,
                          kControlService,

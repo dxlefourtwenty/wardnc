@@ -1,0 +1,221 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WARDNC_BIN="${WARDNC_BIN:-/home/dxle/builds/wardnc/build/wardnc}"
+WARDNC_QT_PLATFORM="${WARDNC_QT_PLATFORM:-wayland}"
+WARDNC_QT_SHELL_INTEGRATION="${WARDNC_QT_SHELL_INTEGRATION:-layer-shell}"
+WARDNC_TAKEOVER_NOTIFICATIONS="${WARDNC_TAKEOVER_NOTIFICATIONS:-0}"
+WARDNC_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(/usr/bin/id -u)}"
+STATE_DIR="${WARDNC_RUNTIME_DIR}/wardnc"
+STATE_FILE="${WARDNC_STATE_FILE:-${STATE_DIR}/panel.state}"
+PKILL_BIN="/usr/bin/pkill"
+PGREP_BIN="/usr/bin/pgrep"
+KILL_BIN="/usr/bin/kill"
+SLEEP_BIN="/usr/bin/sleep"
+SETSID_BIN="/usr/bin/setsid"
+NOHUP_BIN="/usr/bin/nohup"
+NOTIFY_SEND_BIN="${NOTIFY_SEND_BIN:-/home/dxle/bin/notify-send}"
+BUSCTL_BIN="/usr/bin/busctl"
+
+WARDNC_NOTIFY_APP_NAME="${WARDNC_NOTIFY_APP_NAME:-restart-wardnc}"
+WARDNC_NOTIFY_STACK_TAG="${WARDNC_NOTIFY_STACK_TAG:-restart-wardnc}"
+
+usage() {
+    printf 'Usage: %s [--dry-run]\n' "${0##*/}"
+}
+
+notify_error() {
+    local message="$1"
+
+    if [[ -x "$NOTIFY_SEND_BIN" ]]; then
+        "$NOTIFY_SEND_BIN" \
+            -a "$WARDNC_NOTIFY_APP_NAME" \
+            -h "string:x-dunst-stack-tag:$WARDNC_NOTIFY_STACK_TAG" \
+            -u critical \
+            -t 4000 \
+            "wardnc" \
+            "$message" >/dev/null 2>&1 || true
+    fi
+}
+
+collect_wardnc_pids() {
+    {
+        "$PGREP_BIN" -x wardnc 2>/dev/null || true
+        "$PGREP_BIN" -f -- "$WARDNC_BIN" 2>/dev/null || true
+    } | /usr/bin/awk 'NF { print $1 }' | /usr/bin/awk '!seen[$1]++'
+}
+
+validate_inputs() {
+    if [[ -z "$WARDNC_BIN" ]]; then
+        notify_error "wardnc binary path is empty"
+        exit 1
+    fi
+
+    if [[ ! -x "$WARDNC_BIN" ]]; then
+        notify_error "wardnc binary not found: $WARDNC_BIN"
+        exit 1
+    fi
+}
+
+write_state_closed() {
+    local tmp_file=""
+
+    /usr/bin/mkdir -p "$STATE_DIR"
+    tmp_file="$(/usr/bin/mktemp "${STATE_DIR}/.panel.state.XXXXXX")"
+    printf 'closed\n' > "$tmp_file"
+    /usr/bin/mv "$tmp_file" "$STATE_FILE"
+}
+
+stop_wardnc() {
+    local pids=()
+
+    mapfile -t pids < <(collect_wardnc_pids)
+    [[ ${#pids[@]} -gt 0 ]] || return 0
+
+    "$PKILL_BIN" -x wardnc >/dev/null 2>&1 || true
+    "$PKILL_BIN" -f -- "$WARDNC_BIN" >/dev/null 2>&1 || true
+
+    for _ in {1..20}; do
+        mapfile -t pids < <(collect_wardnc_pids)
+        [[ ${#pids[@]} -eq 0 ]] && return 0
+        "$SLEEP_BIN" 0.05
+    done
+
+    mapfile -t pids < <(collect_wardnc_pids)
+    if [[ ${#pids[@]} -gt 0 ]]; then
+        "$KILL_BIN" -9 "${pids[@]}" >/dev/null 2>&1 || true
+    fi
+}
+
+notification_owner_pid() {
+    [[ -x "$BUSCTL_BIN" ]] || return 1
+
+    local owner=""
+    owner="$("$BUSCTL_BIN" --user call \
+        org.freedesktop.DBus \
+        /org/freedesktop/DBus \
+        org.freedesktop.DBus \
+        GetNameOwner \
+        s org.freedesktop.Notifications 2>/dev/null | /usr/bin/awk '{print $2}' | /usr/bin/tr -d '"' || true)"
+    [[ -n "$owner" ]] || return 1
+
+    "$BUSCTL_BIN" --user call \
+        org.freedesktop.DBus \
+        /org/freedesktop/DBus \
+        org.freedesktop.DBus \
+        GetConnectionUnixProcessID \
+        s "$owner" 2>/dev/null | /usr/bin/awk '{print $2}'
+}
+
+is_competing_notification_owner() {
+    local pid="$1"
+    local cmdline=""
+
+    [[ "$pid" =~ ^[0-9]+$ ]] || return 1
+    [[ -r "/proc/${pid}/cmdline" ]] || return 1
+
+    cmdline="$(/usr/bin/tr '\0' ' ' < "/proc/${pid}/cmdline" 2>/dev/null || true)"
+    [[ -n "$cmdline" ]] || return 1
+
+    case "$cmdline" in
+        *wardnc*)
+            return 1
+            ;;
+        *dunst*|*mako*|*swaync*|*fnott*|*xfce4-notifyd*|*notification-daemon*)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+stop_competing_notification_owner() {
+    [[ "$WARDNC_TAKEOVER_NOTIFICATIONS" == "1" ]] || return 0
+
+    local owner_pid=""
+    owner_pid="$(notification_owner_pid || true)"
+    [[ -n "$owner_pid" ]] || return 0
+    is_competing_notification_owner "$owner_pid" || return 0
+
+    "$KILL_BIN" -TERM "$owner_pid" >/dev/null 2>&1 || true
+    for _ in {1..20}; do
+        if ! /usr/bin/kill -0 "$owner_pid" >/dev/null 2>&1; then
+            return 0
+        fi
+        "$SLEEP_BIN" 0.05
+    done
+    "$KILL_BIN" -9 "$owner_pid" >/dev/null 2>&1 || true
+}
+
+start_wardnc() {
+    if [[ -x "$SETSID_BIN" ]]; then
+        QT_QPA_PLATFORM="$WARDNC_QT_PLATFORM" \
+            QT_WAYLAND_SHELL_INTEGRATION="$WARDNC_QT_SHELL_INTEGRATION" \
+            WARDNC_TAKEOVER_NOTIFICATIONS="$WARDNC_TAKEOVER_NOTIFICATIONS" \
+            WARDNC_STATE_FILE="$STATE_FILE" \
+            XDG_RUNTIME_DIR="$WARDNC_RUNTIME_DIR" \
+            "$SETSID_BIN" -f "$WARDNC_BIN" >/dev/null 2>&1 || true
+    else
+        QT_QPA_PLATFORM="$WARDNC_QT_PLATFORM" \
+            QT_WAYLAND_SHELL_INTEGRATION="$WARDNC_QT_SHELL_INTEGRATION" \
+            WARDNC_TAKEOVER_NOTIFICATIONS="$WARDNC_TAKEOVER_NOTIFICATIONS" \
+            WARDNC_STATE_FILE="$STATE_FILE" \
+            XDG_RUNTIME_DIR="$WARDNC_RUNTIME_DIR" \
+            "$NOHUP_BIN" "$WARDNC_BIN" >/dev/null 2>&1 &
+    fi
+}
+
+wait_for_wardnc() {
+    local pids=()
+
+    for _ in {1..40}; do
+        mapfile -t pids < <(collect_wardnc_pids)
+        if [[ ${#pids[@]} -gt 0 ]]; then
+            return 0
+        fi
+        "$SLEEP_BIN" 0.05
+    done
+
+    notify_error "failed to start wardnc"
+    exit 1
+}
+
+main() {
+    local dry_run=0
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --dry-run)
+                dry_run=1
+                shift
+                ;;
+            --help|-h)
+                usage
+                exit 0
+                ;;
+            *)
+                usage >&2
+                exit 2
+                ;;
+        esac
+    done
+
+    validate_inputs
+
+    if [[ "$dry_run" -eq 1 ]]; then
+        printf 'binary=%s\n' "$WARDNC_BIN"
+        if [[ -x /usr/bin/sha256sum ]]; then
+            /usr/bin/sha256sum "$WARDNC_BIN"
+        fi
+        return 0
+    fi
+
+    stop_wardnc
+    stop_competing_notification_owner
+    write_state_closed
+    start_wardnc
+    wait_for_wardnc
+}
+
+main "$@"

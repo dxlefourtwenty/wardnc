@@ -82,6 +82,7 @@ public slots:
                           const QVariantMap &hints);
     void closeNotification(uint id, uint reason = 3);
     void reloadConfiguration();
+    void reloadStyle();
     void openPanel();
     void closePanel();
     void togglePanel();
@@ -133,6 +134,47 @@ private:
         int clearShadowOffsetX = 0;
         int clearShadowOffsetY = 2;
         int clearShadowMarginY = 4;
+
+        bool operator==(const StyleMetrics &other) const
+        {
+            return panelPaddingX == other.panelPaddingX &&
+                   panelPaddingY == other.panelPaddingY &&
+                   panelSectionGap == other.panelSectionGap &&
+                   headerHeight == other.headerHeight &&
+                   headerPaddingX == other.headerPaddingX &&
+                   headerGap == other.headerGap &&
+                   badgeHeight == other.badgeHeight &&
+                   badgeMinWidth == other.badgeMinWidth &&
+                   badgePaddingX == other.badgePaddingX &&
+                   badgeFontSize == other.badgeFontSize &&
+                   notificationGap == other.notificationGap &&
+                   cardPaddingX == other.cardPaddingX &&
+                   cardPaddingY == other.cardPaddingY &&
+                   cardGap == other.cardGap &&
+                   iconSize == other.iconSize &&
+                   iconPadding == other.iconPadding &&
+                   textGap == other.textGap &&
+                   bodyMaxLines == other.bodyMaxLines &&
+                   dismissButtonSize == other.dismissButtonSize &&
+                   actionGap == other.actionGap &&
+                   actionHeight == other.actionHeight &&
+                   actionMinWidth == other.actionMinWidth &&
+                   actionHorizontalPadding == other.actionHorizontalPadding &&
+                   footerHeight == other.footerHeight &&
+                   footerPaddingX == other.footerPaddingX &&
+                   clearHeight == other.clearHeight &&
+                   clearMinWidth == other.clearMinWidth &&
+                   clearPaddingX == other.clearPaddingX &&
+                   clearShadowBlur == other.clearShadowBlur &&
+                   clearShadowOffsetX == other.clearShadowOffsetX &&
+                   clearShadowOffsetY == other.clearShadowOffsetY &&
+                   clearShadowMarginY == other.clearShadowMarginY;
+        }
+
+        bool operator!=(const StyleMetrics &other) const
+        {
+            return !(*this == other);
+        }
     };
 
     void buildUi();

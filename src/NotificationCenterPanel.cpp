@@ -547,6 +547,13 @@ void NotificationCenterPanel::reloadConfiguration()
     }
 }
 
+void NotificationCenterPanel::reloadStyle()
+{
+    if (configLoader_) {
+        configLoader_->reloadStyle();
+    }
+}
+
 void NotificationCenterPanel::applyConfig(const WardNcConfig &config)
 {
     const QString previousStatePath = stateFilePath();
@@ -603,18 +610,19 @@ void NotificationCenterPanel::applyConfig(const WardNcConfig &config)
 void NotificationCenterPanel::applyStyle(const QString &styleSheet,
                                          const QHash<QString, QString> &styleVariables)
 {
+    const StyleMetrics previousStyleMetrics = styleMetrics_;
+
     styleSheet_ = styleSheet;
     styleVariables_ = styleVariables;
 
     refreshStyleMetrics();
     setStyleSheet(styleSheet_);
-    applyStyleMetrics();
-
-    for (NotificationEntry *entry : entries_) {
-        refreshEntryWidgets(entry);
+    if (styleMetrics_ != previousStyleMetrics) {
+        applyStyleMetrics();
+    } else {
+        applyClearButtonShadows();
     }
 
-    rebuildList();
     updateHeader();
     updateFooter();
 }

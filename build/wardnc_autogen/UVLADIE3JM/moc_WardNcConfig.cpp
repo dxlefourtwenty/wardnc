@@ -47,7 +47,8 @@ template <> constexpr inline auto WardNcConfigLoader::qt_create_metaobjectdata<q
         "styleSheet",
         "QHash<QString,QString>",
         "styleVariables",
-        "reload"
+        "reload",
+        "reloadStyle"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -61,6 +62,8 @@ template <> constexpr inline auto WardNcConfigLoader::qt_create_metaobjectdata<q
         }}),
         // Slot 'reload'
         QtMocHelpers::SlotData<void()>(9, 2, QMC::AccessPublic, QMetaType::Void),
+        // Slot 'reloadStyle'
+        QtMocHelpers::SlotData<void()>(10, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -87,6 +90,7 @@ void WardNcConfigLoader::qt_static_metacall(QObject *_o, QMetaObject::Call _c, i
         case 0: _t->configChanged((*reinterpret_cast<std::add_pointer_t<WardNcConfig>>(_a[1]))); break;
         case 1: _t->styleChanged((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QHash<QString,QString>>>(_a[2]))); break;
         case 2: _t->reload(); break;
+        case 3: _t->reloadStyle(); break;
         default: ;
         }
     }
@@ -117,14 +121,14 @@ int WardNcConfigLoader::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 4;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 4)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 3;
+        _id -= 4;
     }
     return _id;
 }

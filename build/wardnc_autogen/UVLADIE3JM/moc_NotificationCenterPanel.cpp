@@ -56,6 +56,7 @@ template <> constexpr inline auto NotificationCenterPanel::qt_create_metaobjectd
         "hints",
         "closeNotification",
         "reloadConfiguration",
+        "reloadStyle",
         "openPanel",
         "closePanel",
         "togglePanel",
@@ -97,35 +98,37 @@ template <> constexpr inline auto NotificationCenterPanel::qt_create_metaobjectd
         }}),
         // Slot 'reloadConfiguration'
         QtMocHelpers::SlotData<void()>(17, 2, QMC::AccessPublic, QMetaType::Void),
-        // Slot 'openPanel'
+        // Slot 'reloadStyle'
         QtMocHelpers::SlotData<void()>(18, 2, QMC::AccessPublic, QMetaType::Void),
-        // Slot 'closePanel'
+        // Slot 'openPanel'
         QtMocHelpers::SlotData<void()>(19, 2, QMC::AccessPublic, QMetaType::Void),
-        // Slot 'togglePanel'
+        // Slot 'closePanel'
         QtMocHelpers::SlotData<void()>(20, 2, QMC::AccessPublic, QMetaType::Void),
+        // Slot 'togglePanel'
+        QtMocHelpers::SlotData<void()>(21, 2, QMC::AccessPublic, QMetaType::Void),
         // Slot 'applyConfig'
-        QtMocHelpers::SlotData<void(const WardNcConfig &)>(21, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 22, 23 },
+        QtMocHelpers::SlotData<void(const WardNcConfig &)>(22, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 23, 24 },
         }}),
         // Slot 'applyStyle'
-        QtMocHelpers::SlotData<void(const QString &, const QHash<QString,QString> &)>(24, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QString, 25 }, { 0x80000000 | 26, 27 },
+        QtMocHelpers::SlotData<void(const QString &, const QHash<QString,QString> &)>(25, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QString, 26 }, { 0x80000000 | 27, 28 },
         }}),
         // Slot 'handleStateFileChanged'
-        QtMocHelpers::SlotData<void(const QString &)>(28, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QString, 29 },
+        QtMocHelpers::SlotData<void(const QString &)>(29, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QString, 30 },
         }}),
         // Slot 'handleStateDirectoryChanged'
-        QtMocHelpers::SlotData<void(const QString &)>(30, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QString, 29 },
+        QtMocHelpers::SlotData<void(const QString &)>(31, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QString, 30 },
         }}),
         // Slot 'handleHistoryFileChanged'
-        QtMocHelpers::SlotData<void(const QString &)>(31, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QString, 29 },
+        QtMocHelpers::SlotData<void(const QString &)>(32, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QString, 30 },
         }}),
         // Slot 'handleHistoryDirectoryChanged'
-        QtMocHelpers::SlotData<void(const QString &)>(32, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QString, 29 },
+        QtMocHelpers::SlotData<void(const QString &)>(33, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QString, 30 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -156,15 +159,16 @@ void NotificationCenterPanel::qt_static_metacall(QObject *_o, QMetaObject::Call 
         case 3: _t->closeNotification((*reinterpret_cast<std::add_pointer_t<uint>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<uint>>(_a[2]))); break;
         case 4: _t->closeNotification((*reinterpret_cast<std::add_pointer_t<uint>>(_a[1]))); break;
         case 5: _t->reloadConfiguration(); break;
-        case 6: _t->openPanel(); break;
-        case 7: _t->closePanel(); break;
-        case 8: _t->togglePanel(); break;
-        case 9: _t->applyConfig((*reinterpret_cast<std::add_pointer_t<WardNcConfig>>(_a[1]))); break;
-        case 10: _t->applyStyle((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QHash<QString,QString>>>(_a[2]))); break;
-        case 11: _t->handleStateFileChanged((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 12: _t->handleStateDirectoryChanged((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 13: _t->handleHistoryFileChanged((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 14: _t->handleHistoryDirectoryChanged((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 6: _t->reloadStyle(); break;
+        case 7: _t->openPanel(); break;
+        case 8: _t->closePanel(); break;
+        case 9: _t->togglePanel(); break;
+        case 10: _t->applyConfig((*reinterpret_cast<std::add_pointer_t<WardNcConfig>>(_a[1]))); break;
+        case 11: _t->applyStyle((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QHash<QString,QString>>>(_a[2]))); break;
+        case 12: _t->handleStateFileChanged((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 13: _t->handleStateDirectoryChanged((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 14: _t->handleHistoryFileChanged((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 15: _t->handleHistoryDirectoryChanged((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
         default: ;
         }
     }
@@ -195,14 +199,14 @@ int NotificationCenterPanel::qt_metacall(QMetaObject::Call _c, int _id, void **_
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 15)
+        if (_id < 16)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 15;
+        _id -= 16;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 15)
+        if (_id < 16)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 15;
+        _id -= 16;
     }
     return _id;
 }
