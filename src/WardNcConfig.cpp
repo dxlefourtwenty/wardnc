@@ -13,6 +13,23 @@
 #include <QTextStream>
 #include <unistd.h>
 
+/*
+ * WardNcConfigLoader owns config and style input at the boundary of the
+ * application. The parser accepts the small TOML subset wardnc uses instead of
+ * adding a broader dependency: section headers, key/value pairs, strings,
+ * integers, booleans, and comments.
+ *
+ * Known malformed values reject the current load so the previous in-memory
+ * config can keep running. Unknown keys are ignored for forward compatibility.
+ * Values are clamped and normalized before the panel sees them, which keeps UI
+ * code from repeating defensive bounds checks.
+ *
+ * Stylesheets are treated as user-facing Qt stylesheets with a few compatibility
+ * additions: local imports are inlined, CSS custom properties are resolved, and
+ * simple wardnc selectors are normalized to Qt object selectors. File and
+ * directory watchers are both used because many editors save by replacing files,
+ * which can invalidate file-only watches.
+ */
 namespace {
 
 struct LoadedStyleSheet {

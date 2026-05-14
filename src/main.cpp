@@ -22,6 +22,21 @@
 #include "WardNcConfig.h"
 #include "WardNcControl.h"
 
+/*
+ * Process composition lives here so the rest of the project can stay focused on
+ * one responsibility at a time. Startup policy, command-line forwarding, D-Bus
+ * name ownership, single-instance locking, and signal-to-Qt handoff are all
+ * process-level concerns, not panel or notification-server behavior.
+ *
+ * Control commands are sent to the running daemon over the private wardnc D-Bus
+ * service instead of starting a second instance. The notification service is
+ * registered separately and only replaces an existing owner when explicitly
+ * requested through WARDNC_TAKEOVER_NOTIFICATIONS.
+ *
+ * SIGUSR1 reload uses a pipe plus QSocketNotifier because the POSIX signal
+ * handler must stay async-signal-safe. The handler writes one byte; Qt performs
+ * the actual reload later on the event loop.
+ */
 namespace {
 
 constexpr auto kNotificationService = "org.freedesktop.Notifications";

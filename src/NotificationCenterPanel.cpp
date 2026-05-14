@@ -44,6 +44,31 @@
 
 #include "NotificationTypes.h"
 
+/*
+ * NotificationCenterPanel owns the visible notification center and the state
+ * that directly affects it: widget construction, entry storage, search, action
+ * buttons, placement, animation, state-file control, and JSONL history.
+ *
+ * The panel stays in Qt Widgets to match the rest of the project and keep D-Bus,
+ * signals, stylesheets, and layout in one object model. Config and style reloads
+ * are separated from UI construction so live changes can update behavior and
+ * dimensions without rebuilding the entire window.
+ *
+ * Notifications are indexed by list order, id, and stack tag. The list preserves
+ * display and trimming order, the id map serves D-Bus replacement and close
+ * requests, and the stack-tag map supports client-side replacement groups.
+ *
+ * Qt stylesheets handle painting, while StyleMetrics mirrors selected CSS
+ * variables into C++ for layout values that Qt stylesheets cannot reliably drive
+ * at runtime. Cards are rebuilt when content or metrics change so each entry
+ * stays consistent with the current config.
+ *
+ * Placement supports both layer-shell Wayland windows and ordinary Qt windows.
+ * Layer-shell needs anchors, margins, desired size, keyboard interactivity, and
+ * input masking; the fallback path uses normal window flags, move, show, and
+ * hide behavior. Hyprland and Waybar checks stay local to placement so the rest
+ * of the panel is not compositor-specific.
+ */
 #if WARDNC_HAS_LAYERSHELLQT
 #include <LayerShellQt/window.h>
 #endif

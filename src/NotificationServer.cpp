@@ -1,5 +1,16 @@
 #include "NotificationServer.h"
 
+/*
+ * This file is the freedesktop notification D-Bus adapter. It translates the
+ * external protocol into Qt signals and deliberately leaves presentation,
+ * history, replacement policy beyond ids, and timeout behavior to
+ * NotificationCenterPanel.
+ *
+ * Notify reuses replacesId when provided and otherwise allocates a local
+ * monotonic id. Close and action callbacks are routed back through this object
+ * so D-Bus clients receive the standard NotificationClosed and ActionInvoked
+ * signals while the panel remains the source of UI truth.
+ */
 NotificationServer::NotificationServer(QObject *parent)
     : QObject(parent)
 {
