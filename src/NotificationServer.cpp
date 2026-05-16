@@ -41,12 +41,25 @@ uint NotificationServer::Notify(const QString &appName,
 
 QStringList NotificationServer::GetCapabilities() const
 {
-    return {
-        QStringLiteral("body"),
-        QStringLiteral("icon-static"),
-        QStringLiteral("actions"),
-        QStringLiteral("persistence")
-    };
+    QStringList capabilities;
+
+    if (notificationsConfig_.bodySupported) {
+        capabilities.append(QStringLiteral("body"));
+    }
+    if (notificationsConfig_.bodyMarkupSupported) {
+        capabilities.append(QStringLiteral("body-markup"));
+    }
+    if (notificationsConfig_.imageSupported) {
+        capabilities.append(QStringLiteral("icon-static"));
+    }
+    if (notificationsConfig_.actionsSupported) {
+        capabilities.append(QStringLiteral("actions"));
+    }
+    if (notificationsConfig_.persistenceSupported) {
+        capabilities.append(QStringLiteral("persistence"));
+    }
+
+    return capabilities;
 }
 
 void NotificationServer::GetServerInformation(QString &name,
@@ -73,4 +86,9 @@ void NotificationServer::handleNotificationClosed(uint id, uint reason)
 void NotificationServer::invokeAction(uint id, const QString &actionKey)
 {
     emit ActionInvoked(id, actionKey);
+}
+
+void NotificationServer::applyConfig(const WardNcConfig &config)
+{
+    notificationsConfig_ = config.notifications;
 }

@@ -49,7 +49,7 @@ easing = "out-cubic"
 
 [notifications]
 body_supported = true
-body_markup_supported = false
+body_markup_supported = true
 body_hyperlinks_supported = false
 body_images_supported = false
 image_supported = true

@@ -245,6 +245,7 @@ int main(int argc, char *argv[])
     WardNcConfigLoader configLoader;
     NotificationCenterPanel panel(&configLoader);
     NotificationServer server;
+    server.applyConfig(configLoader.config());
     WardNcControl control;
     QSocketNotifier *reloadSignalNotifier = nullptr;
 
@@ -322,6 +323,7 @@ int main(int argc, char *argv[])
     QObject::connect(&control, &WardNcControl::openRequested, &panel, &NotificationCenterPanel::openPanel);
     QObject::connect(&control, &WardNcControl::closeRequested, &panel, &NotificationCenterPanel::closePanel);
     QObject::connect(&control, &WardNcControl::toggleRequested, &panel, &NotificationCenterPanel::togglePanel);
+    QObject::connect(&configLoader, &WardNcConfigLoader::configChanged, &server, &NotificationServer::applyConfig);
 
     return app.exec();
 }

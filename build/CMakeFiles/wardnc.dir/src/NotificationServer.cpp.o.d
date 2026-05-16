@@ -321,4 +321,8 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o: \
  /usr/include/qt6/QtCore/qset.h /usr/include/qt6/QtCore/qhash.h \
  /usr/include/qt6/QtCore/qvarlengtharray.h \
  /usr/include/qt6/QtCore/qalloc.h /usr/include/qt6/QtCore/q23utility.h \
- /usr/include/qt6/QtCore/q20utility.h /usr/include/qt6/QtCore/QString
+ /usr/include/qt6/QtCore/q20utility.h /usr/include/qt6/QtCore/QString \
+ /home/dxle/builds/wardnc/src/WardNcConfig.h \
+ /usr/include/qt6/QtCore/QFileSystemWatcher \
+ /usr/include/qt6/QtCore/qfilesystemwatcher.h \
+ /usr/include/qt6/QtCore/QHash /usr/include/qt6/QtCore/QString

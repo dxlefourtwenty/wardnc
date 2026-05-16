@@ -1,5 +1,6 @@
 /home/dxle/builds/wardnc/build/wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp: /home/dxle/builds/wardnc/src/NotificationServer.h \
   /home/dxle/builds/wardnc/build/wardnc_autogen/moc_predefs.h \
+  /home/dxle/builds/wardnc/src/WardNcConfig.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
   /usr/include/asm-generic/errno-base.h \
@@ -264,6 +265,8 @@
   /usr/include/linux/types.h \
   /usr/include/locale.h \
   /usr/include/pthread.h \
+  /usr/include/qt6/QtCore/QFileSystemWatcher \
+  /usr/include/qt6/QtCore/QHash \
   /usr/include/qt6/QtCore/QMap \
   /usr/include/qt6/QtCore/QObject \
   /usr/include/qt6/QtCore/QString \
@@ -308,6 +311,7 @@
   /usr/include/qt6/QtCore/qdatastream.h \
   /usr/include/qt6/QtCore/qdebug.h \
   /usr/include/qt6/QtCore/qexceptionhandling.h \
+  /usr/include/qt6/QtCore/qfilesystemwatcher.h \
   /usr/include/qt6/QtCore/qflags.h \
   /usr/include/qt6/QtCore/qfloat16.h \
   /usr/include/qt6/QtCore/qforeach.h \

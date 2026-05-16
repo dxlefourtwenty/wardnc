@@ -4,12 +4,15 @@
 #include <QStringList>
 #include <QVariantMap>
 
+#include "WardNcConfig.h"
+
 class NotificationServer : public QObject {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.freedesktop.Notifications")
 
 public:
     explicit NotificationServer(QObject *parent = nullptr);
+    void applyConfig(const WardNcConfig &config);
 
 signals:
     void newNotification(uint id,
@@ -45,4 +48,5 @@ public slots:
 
 private:
     uint nextId_ = 1;
+    WardNcNotificationsConfig notificationsConfig_;
 };

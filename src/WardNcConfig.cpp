@@ -116,7 +116,7 @@ QString defaultConfigContents()
         "\n"
         "[notifications]\n"
         "body_supported = true\n"
-        "body_markup_supported = false\n"
+        "body_markup_supported = true\n"
         "body_hyperlinks_supported = false\n"
         "body_images_supported = false\n"
         "image_supported = true\n"
@@ -1318,17 +1318,39 @@ StyleLoadResult loadStyleFile(const QString &path, bool isRootFile, StyleLoadCon
     return result;
 }
 
-StyleLoadResult loadStyleSheet(const QString &path)
+StyleLoadResult loadStyleSheet(const QString &path, const QStringList &variableSourcePaths = {})
 {
     StyleLoadResult result;
     StyleLoadContext context;
+    const QString rootPath = normalizedPath(path);
+    QStringList loadedVariablePaths;
+    QString styleSheetPrefix;
 
-    const StyleLoadResult styleFile = loadStyleFile(path, true, &context);
+    for (const QString &variableSourcePath : variableSourcePaths) {
+        const QString resolvedVariableSourcePath = normalizedPath(variableSourcePath);
+        if (resolvedVariableSourcePath.isEmpty() || resolvedVariableSourcePath == rootPath ||
+            loadedVariablePaths.contains(resolvedVariableSourcePath) ||
+            !QFileInfo::exists(resolvedVariableSourcePath)) {
+            continue;
+        }
+
+        const StyleLoadResult variableSource = loadStyleFile(resolvedVariableSourcePath, false, &context);
+        if (!variableSource.ok) {
+            qWarning().noquote() << "wardnc:" << variableSource.error;
+            continue;
+        }
+
+        loadedVariablePaths.append(resolvedVariableSourcePath);
+        styleSheetPrefix += variableSource.styleSheet.styleSheet;
+        styleSheetPrefix += QLatin1Char('\n');
+    }
+
+    const StyleLoadResult styleFile = loadStyleFile(rootPath, true, &context);
     if (!styleFile.ok) {
         return styleFile;
     }
 
-    result.styleSheet = finalizeStyleSheet(styleFile.styleSheet.styleSheet);
+    result.styleSheet = finalizeStyleSheet(styleSheetPrefix + styleFile.styleSheet.styleSheet);
     result.styleSheet.dependencyFiles = context.dependencyFiles.values();
     result.styleSheet.dependencyDirectories = context.dependencyDirectories.values();
     result.ok = true;
@@ -1343,6 +1365,11 @@ QString resolvedStylePath(const WardNcConfig &config)
 QString resolvedColorsPath(const WardNcConfig &config)
 {
     return normalizedPath(config.paths.colorsCss);
+}
+
+QString globalThemeVariablesPath()
+{
+    return normalizedPath(QDir::homePath() + QStringLiteral("/.config/themes/current/ward.css"));
 }
 
 } // namespace
@@ -1410,7 +1437,9 @@ void WardNcConfigLoader::reloadStyle()
 void WardNcConfigLoader::loadStyle()
 {
     const QString stylePath = resolvedStylePath(config_);
-    const StyleLoadResult loadedStyleSheet = loadStyleSheet(stylePath);
+    const StyleLoadResult loadedStyleSheet = loadStyleSheet(
+        stylePath,
+        {resolvedColorsPath(config_), globalThemeVariablesPath()});
     if (loadedStyleSheet.ok) {
         styleSheet_ = loadedStyleSheet.styleSheet.styleSheet;
         styleVariables_ = loadedStyleSheet.styleSheet.variables;

@@ -466,7 +466,9 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: \
  /usr/include/qt6/QtWidgets/QVBoxLayout /usr/include/qt6/QtGui/QWindow \
  /usr/include/qt6/QtGui/qwindow.h /usr/include/qt6/QtCore/QEvent \
  /usr/include/qt6/QtCore/QMargins /usr/include/qt6/QtGui/qsurface.h \
- /usr/include/qt6/QtGui/qsurfaceformat.h /usr/include/unistd.h \
+ /usr/include/qt6/QtGui/qsurfaceformat.h \
+ /usr/include/qt6/QtCore/QXmlStreamReader \
+ /usr/include/qt6/QtCore/qxmlstream.h /usr/include/unistd.h \
  /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
  /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
  /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h \

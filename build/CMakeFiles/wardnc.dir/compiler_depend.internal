@@ -1265,6 +1265,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o
  /usr/include/qt6/QtCore/QVariant
  /usr/include/qt6/QtCore/QVariantAnimation
  /usr/include/qt6/QtCore/QVariantMap
+ /usr/include/qt6/QtCore/QXmlStreamReader
  /usr/include/qt6/QtCore/q17memory.h
  /usr/include/qt6/QtCore/q20bit.h
  /usr/include/qt6/QtCore/q20functional.h
@@ -1429,6 +1430,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o
  /usr/include/qt6/QtCore/qvariantmap.h
  /usr/include/qt6/QtCore/qvarlengtharray.h
  /usr/include/qt6/QtCore/qversiontagging.h
+ /usr/include/qt6/QtCore/qxmlstream.h
  /usr/include/qt6/QtCore/qxptype_traits.h
  /usr/include/qt6/QtCore/qyieldcpu.h
  /usr/include/qt6/QtDBus/QDBusArgument
@@ -1549,6 +1551,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o
 CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o
  /home/dxle/builds/wardnc/src/NotificationServer.cpp
  /home/dxle/builds/wardnc/src/NotificationServer.h
+ /home/dxle/builds/wardnc/src/WardNcConfig.h
  /usr/include/alloca.h
  /usr/include/asm-generic/bitsperlong.h
  /usr/include/asm-generic/errno-base.h
@@ -1828,6 +1831,8 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o
  /usr/include/locale.h
  /usr/include/math.h
  /usr/include/pthread.h
+ /usr/include/qt6/QtCore/QFileSystemWatcher
+ /usr/include/qt6/QtCore/QHash
  /usr/include/qt6/QtCore/QMap
  /usr/include/qt6/QtCore/QObject
  /usr/include/qt6/QtCore/QString
@@ -1872,6 +1877,7 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o
  /usr/include/qt6/QtCore/qdatastream.h
  /usr/include/qt6/QtCore/qdebug.h
  /usr/include/qt6/QtCore/qexceptionhandling.h
+ /usr/include/qt6/QtCore/qfilesystemwatcher.h
  /usr/include/qt6/QtCore/qflags.h
  /usr/include/qt6/QtCore/qfloat16.h
  /usr/include/qt6/QtCore/qforeach.h

@@ -39,6 +39,7 @@
 #include <QVariantAnimation>
 #include <QVBoxLayout>
 #include <QWindow>
+#include <QXmlStreamReader>
 #include <limits>
 #include <unistd.h>
 
@@ -324,6 +325,137 @@ QColor styleColorValue(const QHash<QString, QString> &styleVariables,
     return parsed.isValid() ? parsed : fallback;
 }
 
+QString htmlText(const QString &text)
+{
+    QString escaped = text.toHtmlEscaped();
+    escaped.replace(QLatin1Char('\n'), QStringLiteral("<br/>"));
+    return escaped;
+}
+
+QString normalizedCssVariableName(QString name)
+{
+    name = name.trimmed();
+    if (name.startsWith(QStringLiteral("--"))) {
+        return name;
+    }
+    if (name.startsWith(QLatin1Char('-'))) {
+        return {};
+    }
+
+    return QStringLiteral("--") + name;
+}
+
+QString resolvedMarkupStyleValue(const QString &value,
+                                 const QHash<QString, QString> &styleVariables,
+                                 QSet<QString> *resolvingNames)
+{
+    static const QRegularExpression variablePattern(
+        QStringLiteral(R"(^var\(\s*(-{0,2}[A-Za-z0-9_-]+)\s*(?:,\s*(.+))?\)$)"));
+
+    const QString trimmed = value.trimmed();
+    const QRegularExpressionMatch match = variablePattern.match(trimmed);
+    if (!match.hasMatch()) {
+        return trimmed;
+    }
+
+    const QString variableName = normalizedCssVariableName(match.captured(1));
+    if (!variableName.isEmpty() && styleVariables.contains(variableName) &&
+        !resolvingNames->contains(variableName)) {
+        resolvingNames->insert(variableName);
+        const QString resolved = resolvedMarkupStyleValue(styleVariables.value(variableName),
+                                                          styleVariables,
+                                                          resolvingNames);
+        resolvingNames->remove(variableName);
+        if (!resolved.isEmpty()) {
+            return resolved;
+        }
+    }
+
+    if (match.lastCapturedIndex() >= 2) {
+        return resolvedMarkupStyleValue(match.captured(2), styleVariables, resolvingNames);
+    }
+
+    return {};
+}
+
+QString cssColor(const QString &value, const QHash<QString, QString> &styleVariables)
+{
+    QSet<QString> resolvingNames;
+    const QString resolvedValue = resolvedMarkupStyleValue(value, styleVariables, &resolvingNames);
+    const QColor color(resolvedValue);
+    return color.isValid() ? color.name(QColor::HexRgb) : QString();
+}
+
+QString pangoSpanStyle(const QXmlStreamAttributes &attributes,
+                       const QHash<QString, QString> &styleVariables)
+{
+    QStringList styles;
+
+    const QString background = attributes.value(QStringLiteral("background")).toString();
+    if (!background.isEmpty()) {
+        const QString color = cssColor(background, styleVariables);
+        if (!color.isEmpty()) {
+            styles.append(QStringLiteral("background-color:%1").arg(color));
+        }
+    }
+
+    const QString fontFamily = attributes.value(QStringLiteral("font_family")).toString();
+    if (!fontFamily.isEmpty()) {
+        styles.append(QStringLiteral("font-family:'%1'").arg(fontFamily.toHtmlEscaped()));
+    }
+
+    const QString fontStyle = attributes.value(QStringLiteral("style")).toString().toLower();
+    if (fontStyle == QStringLiteral("italic") || fontStyle == QStringLiteral("oblique")) {
+        styles.append(QStringLiteral("font-style:%1").arg(fontStyle));
+    }
+
+    const QString weight = attributes.value(QStringLiteral("weight")).toString().toLower();
+    if (weight == QStringLiteral("bold") || weight == QStringLiteral("heavy") || weight == QStringLiteral("ultrabold")) {
+        styles.append(QStringLiteral("font-weight:bold"));
+    }
+
+    const QString underline = attributes.value(QStringLiteral("underline")).toString().toLower();
+    const QString strikethrough = attributes.value(QStringLiteral("strikethrough")).toString().toLower();
+    QStringList textDecorations;
+    if (!underline.isEmpty() && underline != QStringLiteral("none") && underline != QStringLiteral("false")) {
+        textDecorations.append(QStringLiteral("underline"));
+    }
+    if (strikethrough == QStringLiteral("true") || strikethrough == QStringLiteral("single")) {
+        textDecorations.append(QStringLiteral("line-through"));
+    }
+    if (!textDecorations.isEmpty()) {
+        styles.append(QStringLiteral("text-decoration:%1").arg(textDecorations.join(QLatin1Char(' '))));
+    }
+
+    const QString size = attributes.value(QStringLiteral("size")).toString().toLower();
+    if (size == QStringLiteral("small") || size == QStringLiteral("smaller")) {
+        styles.append(QStringLiteral("font-size:small"));
+    } else if (size == QStringLiteral("large") || size == QStringLiteral("larger")) {
+        styles.append(QStringLiteral("font-size:large"));
+    } else if (size == QStringLiteral("x-large") || size == QStringLiteral("xx-large")) {
+        styles.append(QStringLiteral("font-size:%1").arg(size));
+    }
+
+    return styles.join(QLatin1Char(';'));
+}
+
+QString pangoSpanColor(const QXmlStreamAttributes &attributes,
+                       const QHash<QString, QString> &styleVariables)
+{
+    const QString foreground = attributes.value(QStringLiteral("foreground")).toString();
+    if (!foreground.isEmpty()) {
+        return cssColor(foreground, styleVariables);
+    }
+
+    const QString fgcolor = attributes.value(QStringLiteral("fgcolor")).toString();
+    if (!fgcolor.isEmpty()) {
+        return cssColor(fgcolor, styleVariables);
+    }
+
+    const QString color = attributes.value(QStringLiteral("color")).toString();
+    return color.isEmpty() ? QString() : cssColor(color, styleVariables);
+}
+
 QPixmap loadPixmapFromImageData(const QVariant &value)
 {
     if (!value.isValid() || !value.canConvert<QDBusArgument>()) {
@@ -550,7 +682,7 @@ void NotificationCenterPanel::buildUi()
     clearButton_->setText(QStringLiteral("Clear"));
     clearButton_->setCursor(Qt::PointingHandCursor);
     connect(clearButton_, &QPushButton::clicked, this, [this]() {
-        clearNotifications(2);
+        clearNotifications(2, true);
     });
 
     footerLayout_->addStretch(1);
@@ -879,10 +1011,14 @@ void NotificationCenterPanel::rebuildList()
     listLayout_->addStretch(1);
 }
 
-void NotificationCenterPanel::clearNotifications(uint reason)
+void NotificationCenterPanel::clearNotifications(uint reason, bool clearHistory)
 {
     while (!entries_.isEmpty()) {
         removeEntry(entries_.first(), reason);
+    }
+
+    if (clearHistory) {
+        clearNotificationHistoryFile();
     }
 }
 
@@ -1050,13 +1186,14 @@ void NotificationCenterPanel::removeEntry(NotificationEntry *entry, uint reason,
     }
 
     const uint id = entry->id;
+    const bool historyOnly = entry->historyOnly;
     delete entry;
 
     rebuildList();
     updateHeader();
     updateFooter();
 
-    if (emitSignal && !entry->historyOnly) {
+    if (emitSignal && !historyOnly) {
         emit notificationClosed(id, reason);
     }
 }
@@ -1124,33 +1261,43 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
     textColumn->setSpacing(styleMetrics_.textGap);
 
     auto *summaryLabel = new QLabel(card);
-    summaryLabel->setObjectName(QStringLiteral("summaryLabel"));
+    summaryLabel->setObjectName(QStringLiteral("summaryMarkupLabel"));
+    summaryLabel->setTextFormat(Qt::RichText);
     summaryLabel->setWordWrap(true);
-    summaryLabel->setTextFormat(Qt::PlainText);
+    summaryLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     summaryLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     auto *bodyLabel = new QLabel(card);
-    bodyLabel->setObjectName(QStringLiteral("bodyLabel"));
+    bodyLabel->setObjectName(QStringLiteral("bodyMarkupLabel"));
+    bodyLabel->setTextFormat(Qt::RichText);
     bodyLabel->setWordWrap(true);
-    bodyLabel->setTextFormat(Qt::PlainText);
+    bodyLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     bodyLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    const QString summaryText = normalizedSummary(entry->summary, entry->body);
-    const QString bodyText = sanitizeText(entry->body).trimmed();
+    const QString summaryPlainText = sanitizeText(entry->summary).trimmed();
+    const QString summaryText = summaryPlainText.isEmpty()
+                                    ? normalizedSummary(entry->summary, entry->body)
+                                    : entry->summary.trimmed();
+    const QString bodyPlainText = sanitizeText(entry->body).trimmed();
+    QString bodyText = entry->body.trimmed();
 
-    summaryLabel->setText(summaryText);
-    bodyLabel->setText(bodyText);
-    bodyLabel->setVisible(!bodyText.isEmpty());
-
-    if (styleMetrics_.bodyMaxLines > 0 && bodyLabel->isVisible()) {
-        QStringList lines = bodyLabel->text().split(QLatin1Char('\n'));
+    if (styleMetrics_.bodyMaxLines > 0 && !bodyPlainText.isEmpty()) {
+        QStringList lines = bodyPlainText.split(QLatin1Char('\n'));
         if (lines.size() > styleMetrics_.bodyMaxLines) {
             lines = lines.mid(0, styleMetrics_.bodyMaxLines);
             QString &lastLine = lines.last();
             lastLine = lastLine + QStringLiteral("…");
-            bodyLabel->setText(lines.join(QLatin1Char('\n')));
+            bodyText = lines.join(QLatin1Char('\n'));
         }
     }
+
+    summaryLabel->setText(renderNotificationText(summaryText,
+                                                 QStringLiteral("--summary-color"),
+                                                 QStringLiteral("--summary-size")));
+    bodyLabel->setText(renderNotificationText(bodyText,
+                                              QStringLiteral("--body-color"),
+                                              QStringLiteral("--body-size")));
+    bodyLabel->setVisible(!bodyPlainText.isEmpty());
 
     auto *metaRow = new QHBoxLayout();
     metaRow->setContentsMargins(0, 0, 0, 0);
@@ -1313,6 +1460,160 @@ QString NotificationCenterPanel::decodeEntities(const QString &text) const
     }
 
     return output;
+}
+
+QString NotificationCenterPanel::plainTextToRichText(const QString &text, const QString &baseStyle) const
+{
+    if (baseStyle.isEmpty()) {
+        return htmlText(text);
+    }
+
+    return QStringLiteral("<span style=\"%1;\">%2</span>").arg(baseStyle, htmlText(text));
+}
+
+QString NotificationCenterPanel::pangoMarkupToRichText(const QString &text, const QString &baseStyle) const
+{
+    QString input = text;
+    input.replace(QStringLiteral("&nbsp;"), QStringLiteral(" "));
+
+    QXmlStreamReader reader(QStringLiteral("<wardnc>") + input + QStringLiteral("</wardnc>"));
+    QString output;
+    output.reserve(input.size() + 64);
+
+    QList<QString> closingTags;
+    if (!baseStyle.isEmpty()) {
+        output += QStringLiteral("<span style=\"%1;\">").arg(baseStyle);
+        closingTags.append(QStringLiteral("</span>"));
+    }
+
+    while (!reader.atEnd()) {
+        reader.readNext();
+
+        if (reader.isCharacters() || reader.isCDATA()) {
+            output += htmlText(reader.text().toString());
+            continue;
+        }
+
+        if (reader.isStartElement()) {
+            const QString name = reader.name().toString().toLower();
+            if (name == QStringLiteral("wardnc")) {
+                continue;
+            }
+            if (name == QStringLiteral("b") || name == QStringLiteral("strong")) {
+                output += QStringLiteral("<b>");
+                closingTags.append(QStringLiteral("</b>"));
+            } else if (name == QStringLiteral("i") || name == QStringLiteral("em")) {
+                output += QStringLiteral("<i>");
+                closingTags.append(QStringLiteral("</i>"));
+            } else if (name == QStringLiteral("u")) {
+                output += QStringLiteral("<u>");
+                closingTags.append(QStringLiteral("</u>"));
+            } else if (name == QStringLiteral("s") || name == QStringLiteral("strike") || name == QStringLiteral("del")) {
+                output += QStringLiteral("<s>");
+                closingTags.append(QStringLiteral("</s>"));
+            } else if (name == QStringLiteral("big")) {
+                output += QStringLiteral("<span style=\"font-size:large;\">");
+                closingTags.append(QStringLiteral("</span>"));
+            } else if (name == QStringLiteral("small")) {
+                output += QStringLiteral("<span style=\"font-size:small;\">");
+                closingTags.append(QStringLiteral("</span>"));
+            } else if (name == QStringLiteral("tt") || name == QStringLiteral("code")) {
+                output += QStringLiteral("<span style=\"font-family:monospace;\">");
+                closingTags.append(QStringLiteral("</span>"));
+            } else if (name == QStringLiteral("sub")) {
+                output += QStringLiteral("<sub>");
+                closingTags.append(QStringLiteral("</sub>"));
+            } else if (name == QStringLiteral("sup")) {
+                output += QStringLiteral("<sup>");
+                closingTags.append(QStringLiteral("</sup>"));
+            } else if (name == QStringLiteral("br")) {
+                output += QStringLiteral("<br/>");
+            } else if (name == QStringLiteral("span")) {
+                const QString style = pangoSpanStyle(reader.attributes(), styleVariables_);
+                const QString color = pangoSpanColor(reader.attributes(), styleVariables_);
+                QString closingTag;
+                if (!color.isEmpty()) {
+                    output += QStringLiteral("<font color=\"%1\">").arg(color);
+                    closingTag.prepend(QStringLiteral("</font>"));
+                }
+                if (!style.isEmpty()) {
+                    output += QStringLiteral("<span style=\"%1;\">").arg(style);
+                    closingTag.prepend(QStringLiteral("</span>"));
+                }
+                closingTags.append(closingTag);
+            }
+            continue;
+        }
+
+        if (reader.isEndElement()) {
+            const QString name = reader.name().toString().toLower();
+            if (name == QStringLiteral("wardnc")) {
+                continue;
+            }
+            const bool closesRenderedTag = name == QStringLiteral("b") ||
+                                           name == QStringLiteral("strong") ||
+                                           name == QStringLiteral("i") ||
+                                           name == QStringLiteral("em") ||
+                                           name == QStringLiteral("u") ||
+                                           name == QStringLiteral("s") ||
+                                           name == QStringLiteral("strike") ||
+                                           name == QStringLiteral("del") ||
+                                           name == QStringLiteral("big") ||
+                                           name == QStringLiteral("small") ||
+                                           name == QStringLiteral("tt") ||
+                                           name == QStringLiteral("code") ||
+                                           name == QStringLiteral("sub") ||
+                                           name == QStringLiteral("sup") ||
+                                           name == QStringLiteral("span");
+            if (closesRenderedTag && !closingTags.isEmpty()) {
+                output += closingTags.takeLast();
+            }
+        }
+    }
+
+    if (reader.hasError()) {
+        return {};
+    }
+
+    while (!closingTags.isEmpty()) {
+        output += closingTags.takeLast();
+    }
+
+    return output;
+}
+
+QString NotificationCenterPanel::renderNotificationText(const QString &text,
+                                                       const QString &colorVariable,
+                                                       const QString &sizeVariable) const
+{
+    const QColor fallbackColor = styleColorValue(styleVariables_, colorVariable, QColor());
+    QStringList baseStyles;
+    if (fallbackColor.isValid()) {
+        baseStyles.append(QStringLiteral("color:%1").arg(fallbackColor.name(QColor::HexRgb)));
+    }
+
+    const int fontSize = styleLength(sizeVariable, 0);
+    if (fontSize > 0) {
+        baseStyles.append(QStringLiteral("font-size:%1px").arg(fontSize));
+    }
+
+    const QString baseStyle = baseStyles.join(QLatin1Char(';'));
+    if (text.contains(QLatin1Char('<'))) {
+        const QString richText = pangoMarkupToRichText(text, baseStyle);
+        if (!richText.isEmpty()) {
+            return richText;
+        }
+    }
+
+    if (text.contains(QStringLiteral("&lt;"))) {
+        const QString decodedText = decodeEntities(text);
+        const QString richText = pangoMarkupToRichText(decodedText, baseStyle);
+        if (!richText.isEmpty()) {
+            return richText;
+        }
+    }
+
+    return plainTextToRichText(sanitizeText(text), baseStyle);
 }
 
 QString NotificationCenterPanel::sanitizeText(const QString &text) const
@@ -2230,9 +2531,11 @@ void NotificationCenterPanel::loadNotificationHistory()
 
         const QJsonObject record = records.at(index).second;
         const QString appName = sanitizeText(record.value(QStringLiteral("app")).toString()).trimmed();
-        const QString summary = sanitizeText(record.value(QStringLiteral("summary")).toString()).trimmed();
-        const QString body = sanitizeText(record.value(QStringLiteral("body")).toString()).trimmed();
-        if (summary.isEmpty() && body.isEmpty()) {
+        const QString summary = record.value(QStringLiteral("summary")).toString().trimmed();
+        const QString body = record.value(QStringLiteral("body")).toString().trimmed();
+        const QString summaryPlainText = sanitizeText(summary).trimmed();
+        const QString bodyPlainText = sanitizeText(body).trimmed();
+        if (summaryPlainText.isEmpty() && bodyPlainText.isEmpty()) {
             continue;
         }
 
@@ -2246,6 +2549,11 @@ void NotificationCenterPanel::loadNotificationHistory()
             timestamp = timestamp.toLocalTime();
         } else {
             timestamp = QDateTime::currentDateTime();
+        }
+
+        if (historyRecordMatchesLiveEntry(appName, summaryPlainText, bodyPlainText, timestamp)) {
+            historyRecordKeys_.insert(recordKey);
+            continue;
         }
 
         const qint64 storedId = record.value(QStringLiteral("id")).toInteger(-1);
@@ -2293,9 +2601,11 @@ void NotificationCenterPanel::appendNotificationHistory(const NotificationEntry 
     }
 
     const QString appName = displayAppName(entry->appName);
-    const QString summary = normalizedSummary(entry->summary, entry->body).trimmed();
-    const QString body = sanitizeText(entry->body).trimmed();
-    if (appName.isEmpty() && summary.isEmpty() && body.isEmpty()) {
+    const QString summary = entry->summary.trimmed().isEmpty()
+                                ? normalizedSummary(entry->summary, entry->body).trimmed()
+                                : entry->summary.trimmed();
+    const QString body = entry->body.trimmed();
+    if (appName.isEmpty() && sanitizeText(summary).trimmed().isEmpty() && sanitizeText(body).trimmed().isEmpty()) {
         return;
     }
 
@@ -2332,6 +2642,61 @@ void NotificationCenterPanel::appendNotificationHistory(const NotificationEntry 
     refreshHistoryWatcher();
 
     trimNotificationHistoryFile();
+}
+
+void NotificationCenterPanel::clearNotificationHistoryFile()
+{
+    historyRecordKeys_.clear();
+    nextHistoryId_ = 1000000000U;
+
+    if (!config_.notifications.historyEnabled) {
+        return;
+    }
+
+    const QString path = historyFilePath();
+    if (path.trimmed().isEmpty()) {
+        return;
+    }
+
+    const QFileInfo info(path);
+    if (!QDir().mkpath(info.absolutePath())) {
+        return;
+    }
+
+    QFile file(path);
+    writingHistory_ = true;
+    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+        file.close();
+    }
+    writingHistory_ = false;
+
+    refreshHistoryWatcher();
+}
+
+bool NotificationCenterPanel::historyRecordMatchesLiveEntry(const QString &appName,
+                                                            const QString &summary,
+                                                            const QString &body,
+                                                            const QDateTime &timestamp) const
+{
+    for (const NotificationEntry *entry : entries_) {
+        if (!entry || entry->historyOnly) {
+            continue;
+        }
+
+        if (timestamp.isValid() && entry->createdAt.isValid() &&
+            qAbs(entry->createdAt.secsTo(timestamp)) > 15) {
+            continue;
+        }
+
+        const QString entryAppName = displayAppName(entry->appName);
+        const QString entrySummary = sanitizeText(normalizedSummary(entry->summary, entry->body)).trimmed();
+        const QString entryBody = sanitizeText(entry->body).trimmed();
+        if (entryAppName == appName && entrySummary == summary && entryBody == body) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 QString NotificationCenterPanel::stateFilePath() const

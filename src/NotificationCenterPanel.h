@@ -50,8 +50,8 @@ struct NotificationEntry {
     QDateTime createdAt;
 
     QWidget *card = nullptr;
-    QLabel *summaryLabel = nullptr;
-    QLabel *bodyLabel = nullptr;
+    QWidget *summaryLabel = nullptr;
+    QWidget *bodyLabel = nullptr;
     QLabel *appLabel = nullptr;
     QLabel *timestampDayLabel = nullptr;
     QLabel *timestampLabel = nullptr;
@@ -185,7 +185,7 @@ private:
     void updateHeader();
     void updateFooter();
     void rebuildList();
-    void clearNotifications(uint reason = 2);
+    void clearNotifications(uint reason = 2, bool clearHistory = false);
     void enforceCapacity();
     bool entryMatchesSearch(const NotificationEntry *entry) const;
     QString searchableText(const NotificationEntry *entry) const;
@@ -219,6 +219,11 @@ private:
     QString sanitizeText(const QString &text) const;
     QString stripMarkup(const QString &text) const;
     QString decodeEntities(const QString &text) const;
+    QString renderNotificationText(const QString &text,
+                                   const QString &colorVariable,
+                                   const QString &sizeVariable) const;
+    QString pangoMarkupToRichText(const QString &text, const QString &baseStyle) const;
+    QString plainTextToRichText(const QString &text, const QString &baseStyle) const;
     QString normalizedSummary(const QString &summary, const QString &body) const;
     QString displayAppName(const QString &appName) const;
     QString timestampDayText(const QDateTime &timestamp) const;
@@ -264,6 +269,11 @@ private:
     QString historyFilePath() const;
     void loadNotificationHistory();
     void appendNotificationHistory(const NotificationEntry *entry);
+    void clearNotificationHistoryFile();
+    bool historyRecordMatchesLiveEntry(const QString &appName,
+                                       const QString &summary,
+                                       const QString &body,
+                                       const QDateTime &timestamp) const;
     void trimNotificationHistoryFile() const;
     QString normalizedStateValue(const QString &state) const;
     QString readStateFile() const;

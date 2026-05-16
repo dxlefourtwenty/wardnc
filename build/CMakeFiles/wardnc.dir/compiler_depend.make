@@ -1263,6 +1263,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtCore/QVariant \
   /usr/include/qt6/QtCore/QVariantAnimation \
   /usr/include/qt6/QtCore/QVariantMap \
+  /usr/include/qt6/QtCore/QXmlStreamReader \
   /usr/include/qt6/QtCore/q17memory.h \
   /usr/include/qt6/QtCore/q20bit.h \
   /usr/include/qt6/QtCore/q20functional.h \
@@ -1427,6 +1428,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtCore/qvariantmap.h \
   /usr/include/qt6/QtCore/qvarlengtharray.h \
   /usr/include/qt6/QtCore/qversiontagging.h \
+  /usr/include/qt6/QtCore/qxmlstream.h \
   /usr/include/qt6/QtCore/qxptype_traits.h \
   /usr/include/qt6/QtCore/qyieldcpu.h \
   /usr/include/qt6/QtDBus/QDBusArgument \
@@ -1546,6 +1548,7 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
 
 CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o: /home/dxle/builds/wardnc/src/NotificationServer.cpp \
   /home/dxle/builds/wardnc/src/NotificationServer.h \
+  /home/dxle/builds/wardnc/src/WardNcConfig.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
   /usr/include/asm-generic/errno-base.h \
@@ -1825,6 +1828,8 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o: /home/dxle/builds/wardnc/src
   /usr/include/locale.h \
   /usr/include/math.h \
   /usr/include/pthread.h \
+  /usr/include/qt6/QtCore/QFileSystemWatcher \
+  /usr/include/qt6/QtCore/QHash \
   /usr/include/qt6/QtCore/QMap \
   /usr/include/qt6/QtCore/QObject \
   /usr/include/qt6/QtCore/QString \
@@ -1869,6 +1874,7 @@ CMakeFiles/wardnc.dir/src/NotificationServer.cpp.o: /home/dxle/builds/wardnc/src
   /usr/include/qt6/QtCore/qdatastream.h \
   /usr/include/qt6/QtCore/qdebug.h \
   /usr/include/qt6/QtCore/qexceptionhandling.h \
+  /usr/include/qt6/QtCore/qfilesystemwatcher.h \
   /usr/include/qt6/QtCore/qflags.h \
   /usr/include/qt6/QtCore/qfloat16.h \
   /usr/include/qt6/QtCore/qforeach.h \
@@ -4157,6 +4163,10 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationCenterPanel.cpp:
 
 /usr/include/qt6/QtDBus/QDBusConnection:
 
+/usr/include/qt6/QtCore/qlockfile.h:
+
+/usr/include/qt6/QtCore/qcommandlineparser.h:
+
 /usr/lib/cmake/Qt6/QtPublicTargetHelpers.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicSbomPythonHelpers.cmake:
@@ -5497,8 +5507,6 @@ wardnc_autogen/UVLADIE3JM/moc_WardNcConfig.cpp:
 
 /usr/include/c++/15.2.1/bits/ostream.tcc:
 
-/usr/include/qt6/QtCore/qcommandlineparser.h:
-
 /usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersion.cmake:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWaylandQtShellIntegrationPluginConfig.cmake:
@@ -6319,6 +6327,8 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 
 /usr/include/bits/siginfo-consts-arch.h:
 
+/usr/include/qt6/QtCore/QXmlStreamReader:
+
 /usr/include/qt6/QtCore/qtconfiginclude.h:
 
 /usr/include/c++/15.2.1/list:
@@ -6358,6 +6368,8 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 /usr/lib/libgcc_s.so.1:
 
 /usr/include/qt6/QtCore/quuid.h:
+
+/usr/include/qt6/QtCore/qxmlstream.h:
 
 /usr/include/qt6/QtDBus/QDBusVariant:
 
@@ -6466,5 +6478,3 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 /usr/include/qt6/QtCore/QCommandLineOption:
 
 /usr/include/qt6/QtCore/QCommandLineParser:
-
-/usr/include/qt6/QtCore/qlockfile.h:

@@ -56,7 +56,7 @@ struct WardNcAnimationConfig {
 
 struct WardNcNotificationsConfig {
     bool bodySupported = true;
-    bool bodyMarkupSupported = false;
+    bool bodyMarkupSupported = true;
     bool bodyHyperlinksSupported = false;
     bool bodyImagesSupported = false;
     bool imageSupported = true;
