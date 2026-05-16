@@ -682,7 +682,7 @@ void NotificationCenterPanel::buildUi()
     clearButton_->setText(QStringLiteral("Clear"));
     clearButton_->setCursor(Qt::PointingHandCursor);
     connect(clearButton_, &QPushButton::clicked, this, [this]() {
-        clearNotifications(2, true);
+        requestClearNotifications(2, true);
     });
 
     footerLayout_->addStretch(1);
@@ -779,6 +779,7 @@ void NotificationCenterPanel::applyStyle(const QString &styleSheet,
     } else {
         applyClearButtonShadows();
     }
+    refreshNotificationText();
 
     updateHeader();
     updateFooter();
@@ -946,7 +947,7 @@ void NotificationCenterPanel::updateHeader()
                                   ? QStringLiteral("99+")
                                   : QString::number(count));
     countBadgeLabel_->setVisible(count > 0);
-    clearButton_->setEnabled(count > 0);
+    clearButton_->setEnabled(count > 0 && !clearingNotifications_);
     if (searchButton_) {
         searchButton_->setEnabled(count > 0);
     }
@@ -1011,15 +1012,87 @@ void NotificationCenterPanel::rebuildList()
     listLayout_->addStretch(1);
 }
 
+void NotificationCenterPanel::requestClearNotifications(uint reason, bool clearHistory)
+{
+    if (clearingNotifications_ || entries_.isEmpty()) {
+        return;
+    }
+
+    setClearButtonLoading(true);
+    QTimer::singleShot(0, this, [this, reason, clearHistory]() {
+        clearNotifications(reason, clearHistory);
+        setClearButtonLoading(false);
+    });
+}
+
 void NotificationCenterPanel::clearNotifications(uint reason, bool clearHistory)
 {
-    while (!entries_.isEmpty()) {
-        removeEntry(entries_.first(), reason);
+    if (entries_.isEmpty()) {
+        if (clearHistory) {
+            clearNotificationHistoryFile();
+        }
+        return;
     }
+
+    const QList<NotificationEntry *> removedEntries = entries_;
+    QList<uint> closedIds;
+    closedIds.reserve(removedEntries.size());
+
+    entries_.clear();
+    entriesById_.clear();
+    entriesByStackTag_.clear();
+
+    for (NotificationEntry *entry : removedEntries) {
+        if (!entry) {
+            continue;
+        }
+
+        if (entry->expiryTimer) {
+            entry->expiryTimer->stop();
+            entry->expiryTimer->deleteLater();
+            entry->expiryTimer = nullptr;
+        }
+
+        if (entry->card) {
+            entry->card->deleteLater();
+            entry->card = nullptr;
+        }
+
+        if (!entry->historyOnly) {
+            closedIds.append(entry->id);
+        }
+
+        delete entry;
+    }
+
+    rebuildList();
+    updateHeader();
+    updateFooter();
 
     if (clearHistory) {
         clearNotificationHistoryFile();
     }
+
+    if (listContainer_) {
+        listContainer_->repaint();
+    }
+
+    for (uint id : closedIds) {
+        emit notificationClosed(id, reason);
+    }
+}
+
+void NotificationCenterPanel::setClearButtonLoading(bool loading)
+{
+    clearingNotifications_ = loading;
+    if (!clearButton_) {
+        return;
+    }
+
+    clearButton_->setText(loading ? QStringLiteral("Clearing") : QStringLiteral("Clear"));
+    clearButton_->setEnabled(!loading && !entries_.isEmpty());
+    clearButton_->setCursor(loading ? Qt::BusyCursor : Qt::PointingHandCursor);
+    clearButton_->repaint();
 }
 
 bool NotificationCenterPanel::entryMatchesSearch(const NotificationEntry *entry) const
@@ -1274,31 +1347,6 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
     bodyLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     bodyLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    const QString summaryPlainText = sanitizeText(entry->summary).trimmed();
-    const QString summaryText = summaryPlainText.isEmpty()
-                                    ? normalizedSummary(entry->summary, entry->body)
-                                    : entry->summary.trimmed();
-    const QString bodyPlainText = sanitizeText(entry->body).trimmed();
-    QString bodyText = entry->body.trimmed();
-
-    if (styleMetrics_.bodyMaxLines > 0 && !bodyPlainText.isEmpty()) {
-        QStringList lines = bodyPlainText.split(QLatin1Char('\n'));
-        if (lines.size() > styleMetrics_.bodyMaxLines) {
-            lines = lines.mid(0, styleMetrics_.bodyMaxLines);
-            QString &lastLine = lines.last();
-            lastLine = lastLine + QStringLiteral("…");
-            bodyText = lines.join(QLatin1Char('\n'));
-        }
-    }
-
-    summaryLabel->setText(renderNotificationText(summaryText,
-                                                 QStringLiteral("--summary-color"),
-                                                 QStringLiteral("--summary-size")));
-    bodyLabel->setText(renderNotificationText(bodyText,
-                                              QStringLiteral("--body-color"),
-                                              QStringLiteral("--body-size")));
-    bodyLabel->setVisible(!bodyPlainText.isEmpty());
-
     auto *metaRow = new QHBoxLayout();
     metaRow->setContentsMargins(0, 0, 0, 0);
     metaRow->setSpacing(styleMetrics_.textGap);
@@ -1344,6 +1392,53 @@ void NotificationCenterPanel::refreshEntryWidgets(NotificationEntry *entry)
     entry->timestampDayLabel = timestampDayLabel;
     entry->timestampLabel = timestampLabel;
     entry->iconLabel = iconLabel;
+
+    refreshEntryTextWidgets(entry);
+}
+
+void NotificationCenterPanel::refreshNotificationText()
+{
+    for (NotificationEntry *entry : entries_) {
+        refreshEntryTextWidgets(entry);
+    }
+}
+
+void NotificationCenterPanel::refreshEntryTextWidgets(NotificationEntry *entry)
+{
+    if (!entry) {
+        return;
+    }
+
+    auto *summaryLabel = qobject_cast<QLabel *>(entry->summaryLabel);
+    auto *bodyLabel = qobject_cast<QLabel *>(entry->bodyLabel);
+    if (!summaryLabel || !bodyLabel) {
+        return;
+    }
+
+    const QString summaryPlainText = sanitizeText(entry->summary).trimmed();
+    const QString summaryText = summaryPlainText.isEmpty()
+                                    ? normalizedSummary(entry->summary, entry->body)
+                                    : entry->summary.trimmed();
+    const QString bodyPlainText = sanitizeText(entry->body).trimmed();
+    QString bodyText = entry->body.trimmed();
+
+    if (styleMetrics_.bodyMaxLines > 0 && !bodyPlainText.isEmpty()) {
+        QStringList lines = bodyPlainText.split(QLatin1Char('\n'));
+        if (lines.size() > styleMetrics_.bodyMaxLines) {
+            lines = lines.mid(0, styleMetrics_.bodyMaxLines);
+            QString &lastLine = lines.last();
+            lastLine = lastLine + QStringLiteral("…");
+            bodyText = lines.join(QLatin1Char('\n'));
+        }
+    }
+
+    summaryLabel->setText(renderNotificationText(summaryText,
+                                                 QStringLiteral("--summary-color"),
+                                                 QStringLiteral("--summary-size")));
+    bodyLabel->setText(renderNotificationText(bodyText,
+                                              QStringLiteral("--body-color"),
+                                              QStringLiteral("--body-size")));
+    bodyLabel->setVisible(!bodyPlainText.isEmpty());
 }
 
 void NotificationCenterPanel::rebuildEntryActions(NotificationEntry *entry, QVBoxLayout *cardLayout)

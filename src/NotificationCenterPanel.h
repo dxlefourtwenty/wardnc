@@ -185,7 +185,9 @@ private:
     void updateHeader();
     void updateFooter();
     void rebuildList();
+    void requestClearNotifications(uint reason = 2, bool clearHistory = false);
     void clearNotifications(uint reason = 2, bool clearHistory = false);
+    void setClearButtonLoading(bool loading);
     void enforceCapacity();
     bool entryMatchesSearch(const NotificationEntry *entry) const;
     QString searchableText(const NotificationEntry *entry) const;
@@ -213,6 +215,8 @@ private:
     void removeEntry(NotificationEntry *entry, uint reason, bool emitSignal = true);
 
     void refreshEntryWidgets(NotificationEntry *entry);
+    void refreshNotificationText();
+    void refreshEntryTextWidgets(NotificationEntry *entry);
     void rebuildEntryActions(NotificationEntry *entry, QVBoxLayout *cardLayout);
     QList<NotificationActionItem> parseActions(const QStringList &actions) const;
 
@@ -323,6 +327,7 @@ private:
     bool writingState_ = false;
     bool loadingHistory_ = false;
     bool writingHistory_ = false;
+    bool clearingNotifications_ = false;
     bool useCursorScreenForNextPlacement_ = false;
     int panelOffsetX_ = 0;
     uint nextHistoryId_ = 1000000000U;
