@@ -179,6 +179,7 @@ private:
 
     void buildUi();
     void applyUiState();
+    void applyPanelRootAppearance();
     void applyStyleMetrics();
     void applyClearButtonShadows();
     void ensureCloseButtonInteractivity();

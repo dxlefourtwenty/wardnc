@@ -22,6 +22,9 @@
 #include <QLabel>
 #include <QLayoutItem>
 #include <QMouseEvent>
+#include <QPainter>
+#include <QPainterPath>
+#include <QPen>
 #include <QPixmap>
 #include <QProcess>
 #include <QProcessEnvironment>
@@ -80,7 +83,68 @@ constexpr int kMaxIconSize = 128;
 constexpr int kNormalizedIconSize = 64;
 constexpr int kMaxStoredNotifications = 200;
 constexpr int kBadgeDisplayLimit = 99;
+constexpr int kPanelPaintGutter = 1;
 constexpr auto kDefaultHeaderGlyph = "󰂚";
+
+class PanelRootFrame : public QFrame {
+public:
+    explicit PanelRootFrame(QWidget *parent = nullptr)
+        : QFrame(parent)
+    {
+    }
+
+    void setPanelAppearance(const QColor &backgroundColor,
+                            const QColor &borderColor,
+                            int borderRadius,
+                            int borderWidth)
+    {
+        if (backgroundColor_ == backgroundColor &&
+            borderColor_ == borderColor &&
+            borderRadius_ == borderRadius &&
+            borderWidth_ == borderWidth) {
+            return;
+        }
+
+        backgroundColor_ = backgroundColor;
+        borderColor_ = borderColor;
+        borderRadius_ = qMax(0, borderRadius);
+        borderWidth_ = qMax(0, borderWidth);
+        update();
+    }
+
+protected:
+    void paintEvent(QPaintEvent *event) override
+    {
+        Q_UNUSED(event)
+
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+
+        const qreal penWidth = borderWidth_;
+        const qreal inset = penWidth / 2.0;
+        QRectF rect(QPointF(0, 0), QSizeF(width(), height()));
+        rect.adjust(inset, inset, -inset, -inset);
+        if (!rect.isValid()) {
+            return;
+        }
+
+        const qreal radius = qMax<qreal>(0, borderRadius_ - inset);
+        QPainterPath path;
+        path.addRoundedRect(rect, radius, radius);
+
+        painter.fillPath(path, backgroundColor_);
+        if (borderWidth_ > 0 && borderColor_.alpha() > 0) {
+            painter.setPen(QPen(borderColor_, penWidth));
+            painter.drawPath(path);
+        }
+    }
+
+private:
+    QColor backgroundColor_ {26, 27, 38};
+    QColor borderColor_ {65, 72, 104};
+    int borderRadius_ = 20;
+    int borderWidth_ = 1;
+};
 
 QString formatHeaderTitle(const QString &glyph, const QString &title)
 {
@@ -592,7 +656,7 @@ NotificationCenterPanel::~NotificationCenterPanel()
 
 void NotificationCenterPanel::buildUi()
 {
-    panelRoot_ = new QFrame(this);
+    panelRoot_ = new PanelRootFrame(this);
     panelRoot_->setObjectName(QStringLiteral("panelRoot"));
 
     panelLayout_ = new QVBoxLayout(panelRoot_);
@@ -774,6 +838,7 @@ void NotificationCenterPanel::applyStyle(const QString &styleSheet,
 
     refreshStyleMetrics();
     setStyleSheet(styleSheet_);
+    applyPanelRootAppearance();
     if (styleMetrics_ != previousStyleMetrics) {
         applyStyleMetrics();
     } else {
@@ -783,6 +848,20 @@ void NotificationCenterPanel::applyStyle(const QString &styleSheet,
 
     updateHeader();
     updateFooter();
+}
+
+void NotificationCenterPanel::applyPanelRootAppearance()
+{
+    if (!panelRoot_) {
+        return;
+    }
+
+    auto *panelRoot = static_cast<PanelRootFrame *>(panelRoot_);
+    panelRoot->setPanelAppearance(
+        styleColorValue(styleVariables_, QStringLiteral("--panel-bg"), QColor(26, 27, 38)),
+        styleColorValue(styleVariables_, QStringLiteral("--panel-border"), QColor(65, 72, 104)),
+        styleLength(QStringLiteral("--panel-radius"), 20),
+        styleLength(QStringLiteral("--panel-border-width"), 1));
 }
 
 void NotificationCenterPanel::applyUiState()
@@ -850,6 +929,8 @@ void NotificationCenterPanel::applyStyleMetrics()
     if (!panelLayout_ || !headerLayout_ || !listLayout_ || !footerLayout_) {
         return;
     }
+
+    applyPanelRootAppearance();
 
     panelLayout_->setContentsMargins(styleMetrics_.panelPaddingX,
                                      styleMetrics_.panelPaddingY,
@@ -2048,7 +2129,7 @@ void NotificationCenterPanel::applyPanelOffset(int offset)
         return;
     }
 
-    panelRoot_->move(panelOffsetX_, 0);
+    panelRoot_->move(panelOffsetX_ + kPanelPaintGutter, kPanelPaintGutter);
     updateInputMask();
 }
 
@@ -2087,7 +2168,8 @@ void NotificationCenterPanel::updatePanelRootGeometry()
         return;
     }
 
-    panelRoot_->setFixedSize(size());
+    panelRoot_->setFixedSize(qMax(1, width() - (kPanelPaintGutter * 2)),
+                             qMax(1, height() - (kPanelPaintGutter * 2)));
     applyPanelOffset(panelOffsetX_);
 }
 
@@ -2109,7 +2191,7 @@ void NotificationCenterPanel::updateInputMask()
         return;
     }
 
-    const QRect panelRect(panelOffsetX_, 0, panelRoot_->width(), panelRoot_->height());
+    const QRect panelRect(panelRoot_->pos(), panelRoot_->size());
     const QRect visibleRect = viewport.intersected(panelRect);
     if (!visibleRect.isValid() || visibleRect.isEmpty()) {
         setMask(QRegion());
@@ -2150,8 +2232,8 @@ void NotificationCenterPanel::positionSideHandle()
     const int handleHeight = sideHandle_->height();
     const int handleX = panelOnRightSide()
         ? 0
-        : qMax(0, width() - handleWidth);
-    sideHandle_->move(handleX, qMax(0, (height() - handleHeight) / 2));
+        : qMax(0, panelRoot_->width() - handleWidth);
+    sideHandle_->move(handleX, qMax(0, (panelRoot_->height() - handleHeight) / 2));
     sideHandle_->setFixedWidth(handleWidth);
 }
 

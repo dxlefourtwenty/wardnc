@@ -1444,6 +1444,9 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtGui/QImage \
   /usr/include/qt6/QtGui/QKeyEvent \
   /usr/include/qt6/QtGui/QMouseEvent \
+  /usr/include/qt6/QtGui/QPainter \
+  /usr/include/qt6/QtGui/QPainterPath \
+  /usr/include/qt6/QtGui/QPen \
   /usr/include/qt6/QtGui/QPixmap \
   /usr/include/qt6/QtGui/QRegion \
   /usr/include/qt6/QtGui/QScreen \
@@ -1468,6 +1471,8 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o: /home/dxle/builds/wardn
   /usr/include/qt6/QtGui/qinputmethod.h \
   /usr/include/qt6/QtGui/qkeysequence.h \
   /usr/include/qt6/QtGui/qpaintdevice.h \
+  /usr/include/qt6/QtGui/qpainter.h \
+  /usr/include/qt6/QtGui/qpainterpath.h \
   /usr/include/qt6/QtGui/qpalette.h \
   /usr/include/qt6/QtGui/qpen.h \
   /usr/include/qt6/QtGui/qpicture.h \
@@ -4167,6 +4172,14 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationCenterPanel.cpp:
 
 /usr/include/qt6/QtCore/qcommandlineparser.h:
 
+/usr/include/qt6/QtCore/qcommandlineoption.h:
+
+/usr/include/qt6/QtCore/QLockFile:
+
+/usr/include/qt6/QtCore/QCommandLineParser:
+
+/usr/include/qt6/QtCore/QCommandLineOption:
+
 /usr/lib/cmake/Qt6/QtPublicTargetHelpers.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicSbomPythonHelpers.cmake:
@@ -4336,6 +4349,8 @@ wardnc_autogen/moc_predefs.h:
 /usr/include/qt6/QtCore/qprocessordetection.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QGtk3ThemePluginConfig.cmake:
+
+/usr/include/qt6/QtGui/qpainterpath.h:
 
 /usr/include/qt6/QtCore/qpoint.h:
 
@@ -4855,8 +4870,6 @@ wardnc_autogen/mocs_compilation.cpp:
 
 /usr/include/c++/15.2.1/streambuf:
 
-/usr/include/qt6/QtCore/qcommandlineoption.h:
-
 /usr/lib/cmake/Qt6DBusTools/Qt6DBusToolsConfig.cmake:
 
 CMakeFiles/4.3.1/CMakeSystem.cmake:
@@ -5367,6 +5380,8 @@ wardnc_autogen/UVLADIE3JM/moc_WardNcConfig.cpp:
 
 /usr/lib/cmake/Qt6Gui/Qt6QEvdevTabletPluginTargetsPrecheck.cmake:
 
+/usr/include/qt6/QtGui/QPainterPath:
+
 /usr/lib/cmake/Qt6Gui/Qt6QTiffPluginAdditionalTargetInfo.cmake:
 
 /usr/include/asm/errno.h:
@@ -5860,8 +5875,6 @@ wardnc_autogen/UVLADIE3JM/moc_NotificationServer.cpp:
 /usr/include/c++/15.2.1/tr1/riemann_zeta.tcc:
 
 /usr/lib/cmake/Qt6Gui/Qt6QSvgIconPluginTargets-relwithdebinfo.cmake:
-
-/usr/include/qt6/QtCore/QLockFile:
 
 /usr/lib/libgcc_s.so:
 
@@ -6389,6 +6402,10 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 
 /usr/include/qt6/QtGui/QKeyEvent:
 
+/usr/include/qt6/QtGui/QPainter:
+
+/usr/include/qt6/QtGui/QPen:
+
 /usr/share/cmake/Modules/Internal/CheckFlagCommonConfig.cmake:
 
 /usr/include/qt6/QtGui/QPixmap:
@@ -6402,6 +6419,8 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 /usr/include/qt6/QtGui/qinputdevice.h:
 
 /usr/include/qt6/QtGui/qinputmethod.h:
+
+/usr/include/qt6/QtGui/qpainter.h:
 
 /usr/include/qt6/QtGui/qscreen.h:
 
@@ -6474,7 +6493,3 @@ CMakeFiles/wardnc.dir/src/WardNcControl.cpp.o:
 /usr/lib/cmake/Qt6/QtPublicAppleHelpers.cmake:
 
 /usr/include/fcntl.h:
-
-/usr/include/qt6/QtCore/QCommandLineOption:
-
-/usr/include/qt6/QtCore/QCommandLineParser:

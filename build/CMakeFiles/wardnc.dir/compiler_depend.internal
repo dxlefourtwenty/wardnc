@@ -1446,6 +1446,9 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o
  /usr/include/qt6/QtGui/QImage
  /usr/include/qt6/QtGui/QKeyEvent
  /usr/include/qt6/QtGui/QMouseEvent
+ /usr/include/qt6/QtGui/QPainter
+ /usr/include/qt6/QtGui/QPainterPath
+ /usr/include/qt6/QtGui/QPen
  /usr/include/qt6/QtGui/QPixmap
  /usr/include/qt6/QtGui/QRegion
  /usr/include/qt6/QtGui/QScreen
@@ -1470,6 +1473,8 @@ CMakeFiles/wardnc.dir/src/NotificationCenterPanel.cpp.o
  /usr/include/qt6/QtGui/qinputmethod.h
  /usr/include/qt6/QtGui/qkeysequence.h
  /usr/include/qt6/QtGui/qpaintdevice.h
+ /usr/include/qt6/QtGui/qpainter.h
+ /usr/include/qt6/QtGui/qpainterpath.h
  /usr/include/qt6/QtGui/qpalette.h
  /usr/include/qt6/QtGui/qpen.h
  /usr/include/qt6/QtGui/qpicture.h
